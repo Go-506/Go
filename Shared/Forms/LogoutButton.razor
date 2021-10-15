@@ -1,0 +1,24 @@
+﻿@inject NavigationManager NavMan
+
+<button @onclick="LogoutUser" class="btn-primary">Log out</button>
+
+@code {
+
+    public static void LogoutUser()
+    {
+        Globals.CURR_USER = null;
+        Console.WriteLine(Globals.CURR_USER);
+        // Navigates to root rel address (homepage) to avoid security issues
+        NavMan2.NavigateTo("", forceLoad: true);
+    }
+
+    private static NavigationManager NavMan2;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        // Injected components are only accessible in this method
+        // so we rob the bank by assigning from here.
+        NavMan2 = NavMan;
+    }
+}

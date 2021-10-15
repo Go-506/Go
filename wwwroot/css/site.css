@@ -30,6 +30,33 @@ a, .btn-link {
     color: red;
 }
 
+.divider {
+    width: 5px;
+    height: auto;
+    display: inline-block;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.pay-btn {
+    margin-top: 15px;
+}
+.margin-right {
+    margin: 0px 10px 0px 0px;
+}
+.margin-less {
+    margin: 0px;
+}
+
+.right {
+    float: right;
+    vertical-align: middle
+}
+tr.red-row td {
+    color: red;
+}
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

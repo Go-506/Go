@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@inject NavigationManager NavMan 
+
+@inherits LayoutComponentBase
+@using Shared.Forms 
 
 <div class="page">
     <div class="sidebar">
@@ -7,7 +10,20 @@
 
     <div class="main">
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <!-- If not logged in (CURR_USER = null), then load create account and login buttons -->
+            <!-- Else, welcome the current user and give them the option to log out -->
+            <!-- Updating this requires refreshing the page, hence the use of NavigationManager in Shared.Forms.LogoutButton, etc. -->
+            @if (Globals.CURR_USER == null)
+            {
+            <Go.Shared.Forms.CreateAccountForm/>
+            <div class="divider"/>
+            <Go.Shared.Forms.LoginForm/>
+            } else
+            {
+                <div>Welcome, @(Globals.CURR_USER)!</div>
+                <div class="divider"/>
+                <Go.Shared.Forms.LogoutButton/>
+            }
         </div>
 
         <div class="content px-4">
@@ -15,3 +31,7 @@
         </div>
     </div>
 </div>
+
+@code {
+
+}

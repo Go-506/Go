@@ -1,0 +1,132 @@
+﻿@inject NavigationManager NavMan 
+
+@using Go.Shared.Forms.FormModels
+@using Go.Shared.Models
+@using MongoDB.Driver
+
+<button @onclick="Show" class="btn-primary">Log in</button>
+@if (show)
+{
+    <div class="modal fade show d-block" id="login" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titleLabel">Log in</h5>
+                    <button type="button" class="close" @onclick="Close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="loginObj" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="form-group">
+                            <label for="Username">Username: </label>
+                            <InputText id="Username" class="form-control" @bind-Value="loginObj.Username" placeholder="Enter Username" />
+                            <ValidationMessage For="@(() => loginObj.Username)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Password">Password: </label>
+                            <InputText id="Password" class="form-control" @bind-Value="loginObj.Password" placeholder="Enter Password" />
+                            <ValidationMessage For="@(() => loginObj.Password)" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (invalidUsername)
+    {
+        <div class="modal fade show d-block" id="badUsername" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p style="color:#ff0000">Username not found.</p>
+                        <button class="btn-primary" @onclick="CloseBadUsername">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (invalidPassword)
+    {
+        <div class="modal fade show d-block" id="badPassword" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p style="color:#ff0000">Username and password don't match.</p>
+                        <button class="btn-primary" @onclick="CloseBadPassword">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    // Made following this tutorial: https://www.c-sharpcorner.com/article/creating-your-first-modal-pop-up-custom-component-using-blazor-web-assembly-and/
+    private static Login loginObj;
+
+    private static bool show = false;
+    private static bool invalidUsername = false;
+    private static bool invalidPassword = false;
+
+    private static NavigationManager NavMan2;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        // Injected components are only accessible in this method
+        // so we rob the bank by assigning from here.
+        NavMan2 = NavMan;
+    }
+
+    public static void Show()
+    {
+        loginObj = new Login();
+        show = true;
+    }
+    public static void Close()
+    {
+        loginObj = new Login();
+        show = false;
+    }
+    public static void HandleValidSubmit()
+    {
+        string name = loginObj.Username;
+        string pw = loginObj.Password;
+        IMongoCollection<IUser> coll = Globals.USERS;
+
+        IUser thisUser = coll.Find(x => x.name.Equals(name)).FirstOrDefault();
+
+        if (thisUser == null)
+        {
+            invalidUsername = true;
+        }
+        else if (!thisUser.password.Equals(pw))
+        {
+            invalidPassword = true;
+        }
+        else
+        {
+            Globals.CURR_USER = name;
+
+            // NavMan2.Uri is current relative address. The forced nav refreshes the page.
+            NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);
+            Close();
+        }
+    }
+
+    public static void CloseBadUsername()
+    {
+        invalidUsername = false;
+    }
+
+    public static void CloseBadPassword()
+    {
+        invalidPassword = false;
+    }
+}

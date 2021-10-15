@@ -1,0 +1,76 @@
+﻿@inject NavigationManager NavMan
+
+@using Go.Shared.Forms.FormModels
+@using Go.Shared.Models
+@using Go.Shared.Models.MongoDB
+
+<button @onclick="Show" class="btn-primary">Create Account</button>
+@if (show)
+{
+    <div class="modal fade show d-block" id="createAccount" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titleLabel">Create Account</h5>
+                    <button type="button" class="close" @onclick="Close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="createAccountObj" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="form-group">
+                            <label for="Username">Username: </label>
+                            <InputText id="Username" class="form-control" @bind-Value="createAccountObj.Username" placeholder="Enter Username" />
+                            <ValidationMessage For="@(() => createAccountObj.Username)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Password">Password: </label>
+                            <InputText id="Password" class="form-control" @bind-Value="createAccountObj.Password" placeholder="Enter Password" />
+                            <ValidationMessage For="@(() => createAccountObj.Password)" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    // Made following this tutorial: https://www.c-sharpcorner.com/article/creating-your-first-modal-pop-up-custom-component-using-blazor-web-assembly-and/
+    private static CreateAccount createAccountObj;
+
+    private static NavigationManager NavMan2;
+
+    public static bool show { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        // Injected components are only accessible in this method
+        // so we rob the bank by assigning from here.
+        NavMan2 = NavMan;
+    }
+
+    public static void Show()
+    {
+        createAccountObj = new CreateAccount();
+        show = true;
+    }
+    public static void Close()
+    {
+        createAccountObj = new CreateAccount();
+        show = false;
+    }
+    public static void HandleValidSubmit()
+    {
+        Applicant newUser = new Applicant(createAccountObj.Username, createAccountObj.Password);
+        UserDBInterface.InsertUser(newUser);
+        Globals.CURR_USER = newUser.name;
+        // Force refresh
+        NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);
+        Close();
+    }
+}
