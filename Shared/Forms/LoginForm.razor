@@ -3,6 +3,7 @@
 @using Go.Shared.Forms.FormModels
 @using Go.Shared.Models
 @using MongoDB.Driver
+@using Microsoft.AspNetCore.Identity;
 
 <button @onclick="Show" class="btn-primary">Log in</button>
 @if (show)
@@ -27,7 +28,7 @@
                         </div>
                         <div class="form-group">
                             <label for="Password">Password: </label>
-                            <InputText id="Password" class="form-control" @bind-Value="loginObj.Password" placeholder="Enter Password" />
+                            <InputText id="Password" class="form-control" type="password" @bind-Value="loginObj.Password" placeholder="Enter Password" />
                             <ValidationMessage For="@(() => loginObj.Password)" />
                         </div>
                         <button type="submit" class="btn btn-primary">Log in</button>
@@ -106,13 +107,13 @@
         {
             invalidUsername = true;
         }
-        else if (!thisUser.password.Equals(pw))
+        else if (!BCrypt.Net.BCrypt.Verify(pw, thisUser.password))
         {
             invalidPassword = true;
         }
         else
         {
-            Globals.CURR_USER = name;
+            Globals.CURR_USER = thisUser;
 
             // NavMan2.Uri is current relative address. The forced nav refreshes the page.
             NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);

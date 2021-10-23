@@ -35,14 +35,14 @@
                 <span class="oi oi-home" aria-hidden="true"></span> My Account
             </NavLink>
         </li>
-        @if (Globals.CURR_USER != null && UserDBInterface.GetUser(Globals.CURR_USER) is Applicant)
+        @if (Globals.CURR_USER != null && Globals.CURR_USER is Guest)
         {
         }
-        else if (Globals.CURR_USER != null && UserDBInterface.GetUser(Globals.CURR_USER) is Tenant)
+        else if (Globals.CURR_USER != null && Globals.CURR_USER is Player)
         {
 
         }
-        else if (Globals.CURR_USER != null && UserDBInterface.GetUser(Globals.CURR_USER) is Owner)
+        else if (Globals.CURR_USER != null && Globals.CURR_USER is Admin)
         {
 
         }
