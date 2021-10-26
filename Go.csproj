@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
+    <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,4 +30,8 @@
     <Content Remove="C:\Users\lucas\.nuget\packages\mongodb.driver.core\2.13.2\build\../runtimes/win/native/snappy64.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Blazor.Extensions.Canvas" />
+    <None Remove="Newtonsoft.Json" />
+  </ItemGroup>
 </Project>
