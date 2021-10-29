@@ -69,9 +69,21 @@ tr.red-row td {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.board-wrapper {
+    position: relative;
+    width: 600px;
+    height: 600px;
+}
+
+.board-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
