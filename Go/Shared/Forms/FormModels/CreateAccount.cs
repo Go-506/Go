@@ -15,6 +15,10 @@ namespace Go.Shared.Forms.FormModels
         [UniqueName]
         public string Username { get; set; }
         [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+        [Required]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
         public string Password { get; set; }
     }
     // Custom Validation attribute that checks the db and makes sure that the primary key username is unique.

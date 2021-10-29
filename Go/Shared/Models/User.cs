@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using Microsoft.AspNetCore.Identity;
 
 namespace Go.Shared.Models
 {
@@ -12,47 +13,50 @@ namespace Go.Shared.Models
     // name should be readonly (no set method) because it's the primary key
     // type should be readonly in general because it's tied to obj type.
     // There are issues with deserializing interfaces, so this is an abstract class.
-    [BsonKnownTypes(typeof(Applicant), typeof(Owner), typeof(Tenant))]
+    [BsonKnownTypes(typeof(Guest), typeof(Player), typeof(Admin))]
     public abstract class IUser
     {
         [BsonId]
         public string name { get; protected set; }
+        public string email { get; protected set; }
         public string type { get; protected set; }
         public string password { get; protected set; }
     }
 
-    // Applicant obj with basic implementation. Will need some kind of Application
-    // obj, but that's not my (alex)'s job.
-    public class Applicant : IUser
+
+    public class Guest : IUser
     {
-        public Applicant(string name, string password)
+
+        public Guest(string name)
         {
             this.name = name;
-            this.password = password;
-            this.type = "applicant";
+            this.type = "guest";
         }
 
     }
 
-    // Owner obj, implements abstract class IUser
-    public class Owner : IUser
+    public class Player : IUser
     {
-        public Owner(string name, string password)
+        public Player(string name, string email, string password)
         {
             this.name = name;
             this.password = password;
-            this.type = "owner";
+            this.email = email;
+            this.type = "player";
+        }
+        public void hashPassword()
+        {
+            this.password = BCrypt.Net.BCrypt.HashPassword(password);
         }
     }
 
-    // Tenant obj, implements abstract class IUser
-    public class Tenant : IUser
+    public class Admin : IUser
     {
-        public Tenant(string name, string password)
+        public Admin(string name, string password)
         {
             this.name = name;
             this.password = password;
-            this.type = "tenant";
+            this.type = "admin";
         }
     }
 }
