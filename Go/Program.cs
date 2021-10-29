@@ -37,7 +37,7 @@ namespace Go
         // 'users' collection is a collection of IUser objs, defined in Shared.DBModels.User.cs.
         public static IMongoCollection<IUser> USERS = DB.GetCollection<IUser>("users");
 
-        public static string CURR_USER { get; set; } = null;
+        public static IUser CURR_USER { get; set; } = new Guest("guest");
 
     }
 }

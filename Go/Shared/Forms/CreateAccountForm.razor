@@ -3,6 +3,7 @@
 @using Go.Shared.Forms.FormModels
 @using Go.Shared.Models
 @using Go.Shared.Models.MongoDB
+@using MongoDB.Driver
 
 <button @onclick="Show" class="btn-primary">Create Account</button>
 @if (show)
@@ -26,8 +27,13 @@
                             <ValidationMessage For="@(() => createAccountObj.Username)" />
                         </div>
                         <div class="form-group">
+                            <label for="Email">Email Adress: </label>
+                            <InputText id="Email" class="form-control" @bind-Value="createAccountObj.Email" placeholder="Enter Email" />
+                            <ValidationMessage For="@(() => createAccountObj.Email)" />
+                        </div>
+                        <div class="form-group">
                             <label for="Password">Password: </label>
-                            <InputText id="Password" class="form-control" @bind-Value="createAccountObj.Password" placeholder="Enter Password" />
+                            <InputText id="Password" class="form-control" @bind-Value="createAccountObj.Password" type="password" placeholder="Enter Password" />
                             <ValidationMessage For="@(() => createAccountObj.Password)" />
                         </div>
                         <button type="submit" class="btn btn-primary">Create Account</button>
@@ -66,10 +72,12 @@
     }
     public static void HandleValidSubmit()
     {
-        Applicant newUser = new Applicant(createAccountObj.Username, createAccountObj.Password);
+        Player newUser = new Player(createAccountObj.Username, createAccountObj.Email, createAccountObj.Password);
+        newUser.hashPassword();
         UserDBInterface.InsertUser(newUser);
-        Globals.CURR_USER = newUser.name;
+        Globals.CURR_USER = newUser;
         // Force refresh
+        IUser thisUser = Globals.USERS.Find(x => x.name.Equals("A")).FirstOrDefault();
         NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);
         Close();
     }
