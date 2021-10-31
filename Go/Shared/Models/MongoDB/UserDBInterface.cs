@@ -29,19 +29,7 @@ namespace Go.Shared.Models.MongoDB
             return coll.Find(x => x.name.Equals(name)).FirstOrDefault();
         }
 
-        public static List<IUser> GetTenants()
-        {
-            IMongoCollection<IUser> users = Globals.USERS;
-            return users.Find(x => x.type.Equals("tenant")).ToListAsync().Result;
-        }
-        public static bool PromoteUser(Applicant user)
-        {
-            string username = user.name;
-            string password = user.password;
-            Globals.USERS.DeleteOne(Builders<IUser>.Filter.Eq("name", user.name));
-            InsertUser(new Tenant(username, password));
-            return true;
-        }
+
     }
 }
 
