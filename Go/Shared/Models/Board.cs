@@ -42,14 +42,13 @@ namespace Go.Shared.Models
         {
             if (moveIsLegal(move))
             {
-                board[move[0], move[1]] = move[2];
                 blackToPlay = !blackToPlay;
             }
             return moveIsLegal(move);
         }
 
         /// <summary>
-        /// Decides if a move is legal.
+        /// Decides if a move is legal and updates the board if it is.
         /// A move is legal if:
         ///     -the coords are empty
         ///     -the stone will not be immediately captured (after removing stones which that stone captured)
@@ -59,23 +58,29 @@ namespace Go.Shared.Models
         /// <returns></returns>
         public bool moveIsLegal(int[] move)
         {
-            Boolean valid = true;
 
             //check coord not empty
             if (board[move[0], move[1]] != 0)
             {
-                valid = false;
+                return false;
             }
 
-            //consider stones this move will capture (but don't update board)
+            //consider stones this move will capture (but don't update the main board)
             int[,] hypotheticalCapture = (int[,])board.Clone();
-            checkCapture(hypotheticalCapture, move);
+            ArrayList captured = checkCapture(hypotheticalCapture, move);
+            removeStones(hypotheticalCapture, captured);
 
-            //TODO: check if stone will be captured
+            //check if stone will be captured even after removing enemy stones it captures
+            if (getLiberties(hypotheticalCapture, move).Count == 0)
+            {
+                return false;
+            }
 
             //TODO: check if move will create previous board state
 
-            return valid;
+            //update main board if everything works
+            board = hypotheticalCapture;
+            return true;
         }
 
         /// <summary>
@@ -278,11 +283,14 @@ namespace Go.Shared.Models
         }
 
         /// <summary>
-        /// Method to be called when a capture is detected.
+        /// Remove the given stones from the given board.
         /// </summary>
-        private void capture()
+        private void removeStones(int[,] board, ArrayList stones)
         {
-
+            foreach (int[] pos in stones)
+            {
+                board[pos[0], pos[1]] = 0;
+            }
         }
 
         /// <summary>
