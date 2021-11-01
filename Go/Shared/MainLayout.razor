@@ -1,7 +1,10 @@
-﻿@inject NavigationManager NavMan 
+﻿@inject NavigationManager NavMan
+@inject Blazored.LocalStorage.ILocalStorageService localStorage 
+
 
 @inherits LayoutComponentBase
-@using Shared.Forms 
+@using Shared.Forms
+@using Shared.Models
 
 <div class="page">
     <div class="sidebar">
@@ -13,16 +16,17 @@
             <!-- If not logged in (CURR_USER = null), then load create account and login buttons -->
             <!-- Else, welcome the current user and give them the option to log out -->
             <!-- Updating this requires refreshing the page, hence the use of NavigationManager in Shared.Forms.LogoutButton, etc. -->
-            @if (Globals.CURR_USER == null)
+            @if (curr_user == null)
             {
-            <Go.Shared.Forms.CreateAccountForm/>
-            <div class="divider"/>
-            <Go.Shared.Forms.LoginForm/>
-            } else
+                <Go.Shared.Forms.CreateAccountForm />
+                <div class="divider" />
+                <Go.Shared.Forms.LoginForm />
+            }
+            else
             {
-                <div>Welcome, @(Globals.CURR_USER.name)!</div>
-                <div class="divider"/>
-                <Go.Shared.Forms.LogoutButton/>
+                <div>Welcome, @(curr_user.name)!</div>
+                <div class="divider" />
+                <Go.Shared.Forms.LogoutButton />
             }
         </div>
 
@@ -33,5 +37,11 @@
 </div>
 
 @code {
+    IUser curr_user;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        curr_user = await Globals.GetUser(localStorage);
+        StateHasChanged();
+    }
 }

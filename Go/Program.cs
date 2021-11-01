@@ -41,8 +41,6 @@ namespace Go
         public static IMongoCollection<Lesson> LESSONS = DB.GetCollection<Lesson>("lessons");
         public static IMongoCollection<Game> GAMES = DB.GetCollection<Game>("games");
 
-        public static IUser CURR_USER { get; set; } = new Guest("guest");
-
         public static async Task<IUser> GetUser(ILocalStorageService localStorage)
         {
             string username = await localStorage.GetItemAsync<string>("user");
