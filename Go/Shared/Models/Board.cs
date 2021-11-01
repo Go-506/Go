@@ -40,11 +40,12 @@ namespace Go.Shared.Models
         /// <returns>Move successful</returns>
         public bool playMove(int[] move)
         {
-            if (moveIsLegal(move))
+            bool legal = moveIsLegal(move);
+            if (legal)
             {
                 blackToPlay = !blackToPlay;
             }
-            return moveIsLegal(move);
+            return legal;
         }
 
         /// <summary>
@@ -58,10 +59,11 @@ namespace Go.Shared.Models
         /// <returns></returns>
         public bool moveIsLegal(int[] move)
         {
-
+            Console.WriteLine("a");
             //check coord not empty
             if (board[move[0], move[1]] != 0)
             {
+                Console.WriteLine(board[move[0], move[1]]);
                 return false;
             }
 
@@ -73,6 +75,7 @@ namespace Go.Shared.Models
             //check if stone will be captured even after removing enemy stones it captures
             if (getLiberties(hypotheticalCapture, move).Count == 0)
             {
+                Console.WriteLine("2");
                 return false;
             }
 
@@ -90,7 +93,7 @@ namespace Go.Shared.Models
         /// </summary>
         /// <param name="stone">x coord, y coord, and color of the stone.</param>
         /// <returns>ArrayList: an array of [x, y] coords, each corresponding to a connected stone</returns>
-        private ArrayList getConnected(int[] stone)
+        private ArrayList getConnected(int[] stone, int[,] board)
         {
             ArrayList connected = new ArrayList();
             connected.Add(stone);
@@ -102,7 +105,7 @@ namespace Go.Shared.Models
             {
                 currStone = (int[])stonesToCheck.Pop();
                 Boolean[] adjacentsToCheck = { false, false, false, false };
-                Boolean[] adj = findAdjacents(currStone);
+                Boolean[] adj = findAdjacents(currStone, board);
                 int x = currStone[0];
                 int y = currStone[1];
 
@@ -173,16 +176,15 @@ namespace Go.Shared.Models
         {
             ArrayList libs = new ArrayList();
 
-            for (int x = 0; x < board.GetLength(0)-1; x++)
+            for (int x = 0; x < board.GetLength(0); x++)
             {
-                for (int y = 0; y < board.GetLength(1)-1; y++)
+                for (int y = 0; y < board.GetLength(1); y++)
                 {
                     if (board[x, y] == 0)
                     {
                         Boolean[] b = bounds(new int[] { x, y });
                         Boolean isLib = false;
-                        ArrayList connected = getConnected(stone);
-
+                        ArrayList connected = getConnected(stone, board);
                         //up
                         if (b[0] && contains(connected, new int[] { x, y - 1 }))
                         {
@@ -245,7 +247,7 @@ namespace Go.Shared.Models
                 if (getLiberties(board, up).Count == 0)
                 {
                     if (!contains(captured, up))
-                    captured.AddRange(getConnected(up));
+                    captured.AddRange(getConnected(up, board));
                 }
             }
 
@@ -255,7 +257,7 @@ namespace Go.Shared.Models
                 if (getLiberties(board, down).Count == 0)
                 {
                     if (!contains(captured, down))
-                        captured.AddRange(getConnected(down));
+                        captured.AddRange(getConnected(down, board));
                 }
             }
 
@@ -265,7 +267,7 @@ namespace Go.Shared.Models
                 if (getLiberties(board, left).Count == 0)
                 {
                     if (!contains(captured, left))
-                        captured.AddRange(getConnected(left));
+                        captured.AddRange(getConnected(left, board));
                 }
             }
 
@@ -275,7 +277,7 @@ namespace Go.Shared.Models
                 if (getLiberties(board, right).Count == 0)
                 {
                     if (!contains(captured, right))
-                        captured.AddRange(getConnected(right));
+                        captured.AddRange(getConnected(right, board));
                 }
             }
 
@@ -333,7 +335,7 @@ namespace Go.Shared.Models
         /// <returns>[x, x, x, x] where x=false if there is no adjacent stone
         /// of the same color, true otherwise. Corresponds to 
         /// up/down/left/right</returns>
-        private Boolean[] findAdjacents(int[] location)
+        private Boolean[] findAdjacents(int[] location, int[,] board)
         {
             Boolean[] adjacents = { false, false, false, false };
             int x = location[0];
@@ -347,11 +349,11 @@ namespace Go.Shared.Models
             {
                 adjacents[1] = true;
             }
-            if (b[3] && board[x-1, y] == board[x, y])
+            if (b[2] && board[x-1, y] == board[x, y])
             {
                 adjacents[2] = true;
             }
-            if (b[4] && board[x+1, y] == board[x, y])
+            if (b[3] && board[x+1, y] == board[x, y])
             {
                 adjacents[3] = true;
             }
@@ -367,7 +369,7 @@ namespace Go.Shared.Models
         /// false otherwise</returns>
         private Boolean hasAdjacentsNotInList(int[] stone, ArrayList list)
         {
-            Boolean[] adj = findAdjacents(stone);
+            Boolean[] adj = findAdjacents(stone, board);
 
             if (adj[0] && !list.Contains(new int[stone[0], stone[1] - 1]))
             {

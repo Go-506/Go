@@ -4,6 +4,7 @@
 @using Blazor.Extensions.Canvas.Canvas2D
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
+@using Shared.Models
 @inject IJSRuntime jsRuntime
 
 <h3>LocalGame</h3>
@@ -23,6 +24,10 @@
     Canvas2DContext currentCanvasContext;
     List<Move> moves = new List<Move>();
     bool whiteTurn = false;
+
+    
+    Board go = new Board(19);
+    
 
     class Move
     {
@@ -143,7 +148,12 @@
 
     bool IsLegalMove(Move move)
     {
-        return true;
+        int color = -1;
+        if (go.getBlackToPlay())
+        {
+            color = 1;
+        }
+        return go.playMove(new int[] { move.row, move.col, color });
     }
 
     async void DrawStone(Move move)
