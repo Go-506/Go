@@ -225,11 +225,56 @@ namespace Go.Shared.Models
         /// will capture any pieces before committing that move to the global board.</param>
         /// <param name="moveJustPlayed">[0]: x, [1]: y, [2]: color</param>
         /// <returns></returns>
-        private int[ , ] checkCapture(int[ , ] board, int[] moveJustPlayed)
+        private ArrayList checkCapture(int[ , ] board, int[] moveJustPlayed)
         {
-            board[moveJustPlayed[0], moveJustPlayed[1]] = moveJustPlayed[3];
+            ArrayList captured = new ArrayList();
+            int x = moveJustPlayed[0];
+            int y = moveJustPlayed[1];
+            int color = moveJustPlayed[2];
+            board[x, y] = color;
+            Boolean[] b = bounds(moveJustPlayed);
 
-            return new int[0, 0];
+            if (b[0] && board[x, y-1] == -1 * color)
+            {
+                int[] up = new int[] { x, y - 1 };
+                if (getLiberties(board, up).Count == 0)
+                {
+                    if (!contains(captured, up))
+                    captured.AddRange(getConnected(up));
+                }
+            }
+
+            if (b[1] && board[x, y + 1] == -1 * color)
+            {
+                int[] down = new int[] { x, y + 1 };
+                if (getLiberties(board, down).Count == 0)
+                {
+                    if (!contains(captured, down))
+                        captured.AddRange(getConnected(down));
+                }
+            }
+
+            if (b[2] && board[x - 1, y] == -1 * color)
+            {
+                int[] left = new int[] { x - 1, y };
+                if (getLiberties(board, left).Count == 0)
+                {
+                    if (!contains(captured, left))
+                        captured.AddRange(getConnected(left));
+                }
+            }
+
+            if (b[3] && board[x + 1, y] == -1 * color)
+            {
+                int[] right = new int[] { x + 1, y };
+                if (getLiberties(board, right).Count == 0)
+                {
+                    if (!contains(captured, right))
+                        captured.AddRange(getConnected(right));
+                }
+            }
+
+            return captured;
         }
 
         /// <summary>
