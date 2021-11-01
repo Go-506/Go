@@ -36,6 +36,8 @@ namespace Go
         // These are the primary interfaces we will use for each collection.
         // 'users' collection is a collection of IUser objs, defined in Shared.DBModels.User.cs.
         public static IMongoCollection<IUser> USERS = DB.GetCollection<IUser>("users");
+        public static IMongoCollection<Lesson> LESSONS = DB.GetCollection<Lesson>("lessons");
+        public static IMongoCollection<Game> GAMES = DB.GetCollection<Game>("games");
 
         public static IUser CURR_USER { get; set; } = new Guest("guest");
 
