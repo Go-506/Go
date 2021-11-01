@@ -157,13 +157,60 @@ namespace Go.Shared.Models
         /// Gets a list of all liberties of a given stone on a given board. 
         /// A liberty of a stone is an empty space next to the stone or 
         /// any stone connected to that stone.
+        /// 
+        /// Checks every cell on the board exactly once and determines if it's
+        /// an empty cell that's next to a stone connected to the given stone.
         /// </summary>
         /// <param name="stone">[x, y] corresponding to the stone</param>
         /// <returns>an array of [x, y] coords which correspond to empty spaces
         /// that are liberties of the given stone</returns>
-        private int[ , ] getLiberties(int[,] board, int[] stone)
+        private ArrayList getLiberties(int[,] board, int[] stone)
         {
-            return new int[0, 0];
+            ArrayList libs = new ArrayList();
+
+            for (int x = 0; x < board.GetLength(0)-1; x++)
+            {
+                for (int y = 0; y < board.GetLength(1)-1; y++)
+                {
+                    if (board[x, y] == 0)
+                    {
+                        Boolean[] b = bounds(new int[] { x, y });
+                        Boolean isLib = false;
+                        ArrayList connected = getConnected(stone);
+
+                        //up
+                        if (b[0] && contains(connected, new int[] { x, y - 1 }))
+                        {
+                            isLib = true;
+                        }
+
+                        //down
+                        if (b[1] && contains(connected, new int[] { x, y + 1 }))
+                        {
+                            isLib = true;
+                        }
+
+                        //left
+                        if (b[2] && contains(connected, new int[] { x - 1, y }))
+                        {
+                            isLib = true;
+                        }
+
+                        //right
+                        if (b[3] && contains(connected, new int[] { x + 1, y }))
+                        {
+                            isLib = true;
+                        }
+
+                        if (isLib)
+                        {
+                            libs.Add(new int[] { x, y });
+                        }
+                    }
+                }
+            }
+
+            return libs;
         }
 
         /// <summary>
