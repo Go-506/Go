@@ -1,11 +1,10 @@
 ﻿@page "/localgameoptions"
-@inject NavigationManager NavMan
 @using Go.Shared.Forms.FormModels
 
 <h3>LocalGameOptions</h3>
 
-<button href="@($"localgame/{Int32.Parse(options.dimensions)}")">
-    <NavLink class="nav-link" href="@($"localgame/{Int32.Parse(options.dimensions)}")" Match="NavLinkMatch.All"> Start Game
+<button href="@($"localgame/{options.dimensions}")">
+    <NavLink class="nav-link" href="@($"localgame/{options.dimensions}")" Match="NavLinkMatch.All"> Start Game
     </NavLink>
 </button>
 <EditForm Model="options">
@@ -21,15 +20,5 @@
 
 
 @code {
-    private static BoardOptions options;
-
-    private static NavigationManager NavMan2;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        // Injected components are only accessible in this method
-        // so we rob the bank by assigning from here.
-        NavMan2 = NavMan;
-    }
+    private static BoardOptions options = new();
 }

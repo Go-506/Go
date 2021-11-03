@@ -78,7 +78,7 @@ tr.red-row td {
 
 .board-canvas-19 {
     background-image: url("../images/board19.png");
-    width: 620px;
     height: 620px;
+    width: 620px;
     background-size: cover;
 }
