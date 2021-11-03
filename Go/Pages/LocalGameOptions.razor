@@ -1,12 +1,24 @@
 ﻿@page "/localgameoptions"
+@using Go.Shared.Forms.FormModels
 
 <h3>LocalGameOptions</h3>
 
-<button href="/localgame">
-    <NavLink class="nav-link" href="localgame" Match="NavLinkMatch.All"> Start Game
+<button href="@($"localgame/{options.dimensions}")">
+    <NavLink class="nav-link" href="@($"localgame/{options.dimensions}")" Match="NavLinkMatch.All"> Start Game
     </NavLink>
 </button>
+<EditForm Model="options">
+    <div class="form-group">
+        <label for="Dimensions">Board Dimensions: </label>
+        <InputSelect id="Dimensions" @bind-Value="options.dimensions">
+            <option value="9">9x9</option>
+            <option value="12">12x12</option>
+            <option value="19">19x19</option>
+        </InputSelect>
+    </div>
+</EditForm>
+
 
 @code {
-
+    private static BoardOptions options = new();
 }
