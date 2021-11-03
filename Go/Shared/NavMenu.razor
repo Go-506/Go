@@ -27,7 +27,7 @@
                 <span class="oi oi-contrast" aria-hidden="true"></span> Play Local
             </NavLink>
         </li>
-        @if (Globals.CURR_USER is Player or Admin)
+        @if (curr_user is Player or Admin)
         {
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="onlinegameoptions" Match="NavLinkMatch.All">
@@ -40,7 +40,7 @@
                 <span class="oi oi-book" aria-hidden="true"></span> Lessons
             </NavLink>
         </li>
-        @if (Globals.CURR_USER is Player or Admin)
+        @if (curr_user is Player or Admin)
         {
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="account" Match="NavLinkMatch.All">
