@@ -5,7 +5,7 @@
 @using Go.Shared.Models.MongoDB
 @using MongoDB.Driver
 
-<button @onclick="Show" class="btn-primary">Create Account</button>
+<a class="headtext" @onclick="Show"><span class="oi oi-person"></span> Signup</a>
 @if (show)
 {
     <div class="modal fade show d-block" id="createAccount" tabindex="-1" role="dialog">

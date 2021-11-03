@@ -1,11 +1,14 @@
-﻿@inject NavigationManager NavMan 
+﻿@inject NavigationManager NavMan
 
 @using Go.Shared.Forms.FormModels
 @using Go.Shared.Models
 @using MongoDB.Driver
 @using Microsoft.AspNetCore.Identity;
 
-<button @onclick="Show" class="btn-primary">Log in</button>
+<a class="headtext" @onclick="Show"><span class="oi oi-account-login"></span> Login</a>
+<!--<NavLink class="nav-link" @onclick="Show" Match="NavLinkMatch.All">
+    <span class="oi oi-account-login" aria-hidden="true"></span> Login
+</NavLink>-->
 @if (show)
 {
     <div class="modal fade show d-block" id="login" tabindex="-1" role="dialog">

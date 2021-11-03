@@ -8,11 +8,60 @@ a, .btn-link {
     color: #0366d6;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+/*Side navigation bar*/
+.sidebar {
+    background-color: dimgray;
 }
+
+/*Header of sidebar*/
+div.top-row.pl-4 {
+    background-color: darkgray;
+}
+
+/*Clickable Buttons*/
+.btn-primary {
+    color: white;
+    background-color: #555555;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 5px 16px;
+}
+
+/*Top Banner*/
+div.top-row.px-4 {
+    background-image: url(../img/wood.jpg);
+}
+
+/*List used for header (login logout)*/
+ul.header {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+/*Item in header*/
+li.headitem {
+    float: left;
+}
+
+/*a element in header*/
+li a.headtext {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 5px 10px;
+        text-decoration: none;
+}
+
+/*a element in header when hovered over*/
+li a:hover.headtext {
+    background-color: #D3D3D3;
+    cursor: pointer;
+}
+
 
 .content {
     padding-top: 1.1rem;
