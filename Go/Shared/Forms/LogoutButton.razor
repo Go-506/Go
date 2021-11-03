@@ -1,13 +1,12 @@
 ﻿@inject NavigationManager NavMan
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <button @onclick="LogoutUser" class="btn-primary">Log out</button>
 
 @code {
-
-    public static void LogoutUser()
+    public async Task LogoutUser()
     {
-        Globals.CURR_USER = null;
-        Console.WriteLine(Globals.CURR_USER);
+        await Globals.LogoutUser(localStorage);
         // Navigates to root rel address (homepage) to avoid security issues
         NavMan2.NavigateTo("", forceLoad: true);
     }
@@ -21,4 +20,5 @@
         // so we rob the bank by assigning from here.
         NavMan2 = NavMan;
     }
+
 }
