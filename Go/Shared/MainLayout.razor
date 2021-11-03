@@ -7,7 +7,7 @@
 @using Shared.Models
 
 <div class="page">
-    <div class="sidebar">
+    <div style="background-image: none" class="sidebar">
         <NavMenu />
     </div>
 
@@ -16,19 +16,28 @@
             <!-- If not logged in (CURR_USER = null), then load create account and login buttons -->
             <!-- Else, welcome the current user and give them the option to log out -->
             <!-- Updating this requires refreshing the page, hence the use of NavigationManager in Shared.Forms.LogoutButton, etc. -->
-            @if (curr_user == null)
-            {
-                <Go.Shared.Forms.CreateAccountForm />
-                <div class="divider" />
-                <Go.Shared.Forms.LoginForm />
-            }
-            else
-            {
-                <div>Welcome, @(curr_user.name)!</div>
-                <div class="divider" />
-                <Go.Shared.Forms.LogoutButton />
-            }
-        </div>
+            <ul class="header">
+                @if (curr_user == null)
+                {
+                    <li class="headitem">
+                        <Go.Shared.Forms.CreateAccountForm />
+                    </li>
+                    <li class="headitem">
+                        <Go.Shared.Forms.LoginForm />
+                    </li>
+
+
+                }
+                else
+                {
+                    <li class="headitem" style="font-size:24px">Welcome, @(curr_user.name)! </li>
+                    <li class="headitem">
+                        <Go.Shared.Forms.LogoutButton />
+                    </li>
+                }
+            </ul>
+</div>
+
 
         <div class="content px-4">
             @Body

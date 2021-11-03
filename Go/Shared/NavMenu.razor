@@ -5,10 +5,14 @@
 
 
 <div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Go Properties</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+    <center>
+        <img src="img/Go_Logo_With_Black_Go.png" style="width: 100px ; height: auto;">
+    </center>
+    
+    <!--<button class="button-primary" type="button" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
-    </button>
+    </button>-->
+
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
@@ -20,36 +24,31 @@
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="localgameoptions" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Play Local
+                <span class="oi oi-contrast" aria-hidden="true"></span> Play Local
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="onlinegameoptions" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Play Online
-            </NavLink>
-        </li>
+        @if (curr_user is Player or Admin)
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="onlinegameoptions" Match="NavLinkMatch.All">
+                    <span class="oi oi-wifi" aria-hidden="true"></span> Play Online
+                </NavLink>
+            </li>
+        }
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="lessonmenu" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Lessons
+                <span class="oi oi-book" aria-hidden="true"></span> Lessons
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="account" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> My Account
-            </NavLink>
-        </li>
-        @if (curr_user != null && curr_user is Guest)
+        @if (curr_user is Player or Admin)
         {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="account" Match="NavLinkMatch.All">
+                    <span class="oi oi-person" aria-hidden="true"></span> My Account
+                </NavLink>
+            </li>
         }
-        else if (curr_user != null && curr_user is Player)
-        {
-
-        }
-        else if (curr_user != null && curr_user is Admin)
-        {
-
-        }
-    </ul>
+        </ul>
 </div>
 
 @code {
