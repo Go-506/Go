@@ -17,7 +17,7 @@
             <!-- Else, welcome the current user and give them the option to log out -->
             <!-- Updating this requires refreshing the page, hence the use of NavigationManager in Shared.Forms.LogoutButton, etc. -->
             <ul class="header">
-                @if (Globals.CURR_USER == null)
+                @if (curr_user == null)
                 {
                     <li class="headitem">
                         <Go.Shared.Forms.CreateAccountForm />
@@ -30,7 +30,7 @@
                 }
                 else
                 {
-                    <li class="headitem" style="font-size:24px">Welcome, @(Globals.CURR_USER.name)! </li>
+                    <li class="headitem" style="font-size:24px">Welcome, @(curr_user.name)! </li>
                     <li class="headitem">
                         <Go.Shared.Forms.LogoutButton />
                     </li>
