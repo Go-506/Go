@@ -1,4 +1,5 @@
 ﻿@page "/localgame"
+@page "/localgame/{dimensions}"
 @using Blazor.Extensions
 @using Blazor.Extensions.Canvas
 @using Blazor.Extensions.Canvas.Canvas2D
@@ -8,26 +9,20 @@
 @inject IJSRuntime jsRuntime
 
 <h3>LocalGame</h3>
-<div @ref="divCanvas" @onclick="OnClick" class="board-wrapper">
-    <div class="board-canvas">
-        <BECanvas @ref="board" Height="600" Width="600"></BECanvas>
-    </div>
-    <div class="board-canvas">
-        <BECanvas @ref="stones" Height="600" Width="600"></BECanvas>
-    </div>
+<div @ref="divCanvas" @onclick="OnClick" class="board-canvas-19">
+    <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
 </div>
 
 @code {
+    [Parameter]
+    public int dimensions { get; set; }
     ElementReference divCanvas;
-    Blazor.Extensions.BECanvasComponent board;
     Blazor.Extensions.BECanvasComponent stones;
     Canvas2DContext currentCanvasContext;
     List<Move> moves = new List<Move>();
     bool whiteTurn = false;
 
-    
     Board go = new Board(19);
-    
 
     class Move
     {
@@ -36,107 +31,14 @@
         public bool isWhite;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender) DrawBoard();
-    }
-
-    async void DrawBoard()
-    {
-        Canvas2DContext boardContext = await board.CreateCanvas2DAsync();
-        if (board != null && boardContext != null)
-        {
-            await boardContext.SetFillStyleAsync("#853");
-            await boardContext.FillRectAsync(0, 0, 600, 600);
-            await boardContext.SetStrokeStyleAsync("Black");
-            await boardContext.MoveToAsync(30, 30);
-            await boardContext.LineToAsync(570, 30);
-            await boardContext.MoveToAsync(30, 60);
-            await boardContext.LineToAsync(570, 60);
-            await boardContext.MoveToAsync(30, 90);
-            await boardContext.LineToAsync(570, 90);
-            await boardContext.MoveToAsync(30, 120);
-            await boardContext.LineToAsync(570, 120);
-            await boardContext.MoveToAsync(30, 150);
-            await boardContext.LineToAsync(570, 150);
-            await boardContext.MoveToAsync(30, 180);
-            await boardContext.LineToAsync(570, 180);
-            await boardContext.MoveToAsync(30, 210);
-            await boardContext.LineToAsync(570, 210);
-            await boardContext.MoveToAsync(30, 240);
-            await boardContext.LineToAsync(570, 240);
-            await boardContext.MoveToAsync(30, 270);
-            await boardContext.LineToAsync(570, 270);
-            await boardContext.MoveToAsync(30, 300);
-            await boardContext.LineToAsync(570, 300);
-            await boardContext.MoveToAsync(30, 330);
-            await boardContext.LineToAsync(570, 330);
-            await boardContext.MoveToAsync(30, 360);
-            await boardContext.LineToAsync(570, 360);
-            await boardContext.MoveToAsync(30, 390);
-            await boardContext.LineToAsync(570, 390);
-            await boardContext.MoveToAsync(30, 420);
-            await boardContext.LineToAsync(570, 420);
-            await boardContext.MoveToAsync(30, 450);
-            await boardContext.LineToAsync(570, 450);
-            await boardContext.MoveToAsync(30, 480);
-            await boardContext.LineToAsync(570, 480);
-            await boardContext.MoveToAsync(30, 510);
-            await boardContext.LineToAsync(570, 510);
-            await boardContext.MoveToAsync(30, 540);
-            await boardContext.LineToAsync(570, 540);
-            await boardContext.MoveToAsync(30, 570);
-            await boardContext.LineToAsync(570, 570);
-            await boardContext.MoveToAsync(30, 30);
-            await boardContext.LineToAsync(30, 570);
-            await boardContext.MoveToAsync(60, 30);
-            await boardContext.LineToAsync(60, 570);
-            await boardContext.MoveToAsync(90, 30);
-            await boardContext.LineToAsync(90, 570);
-            await boardContext.MoveToAsync(120, 30);
-            await boardContext.LineToAsync(120, 570);
-            await boardContext.MoveToAsync(150, 30);
-            await boardContext.LineToAsync(150, 570);
-            await boardContext.MoveToAsync(180, 30);
-            await boardContext.LineToAsync(180, 570);
-            await boardContext.MoveToAsync(210, 30);
-            await boardContext.LineToAsync(210, 570);
-            await boardContext.MoveToAsync(240, 30);
-            await boardContext.LineToAsync(240, 570);
-            await boardContext.MoveToAsync(270, 30);
-            await boardContext.LineToAsync(270, 570);
-            await boardContext.MoveToAsync(300, 30);
-            await boardContext.LineToAsync(300, 570);
-            await boardContext.MoveToAsync(330, 30);
-            await boardContext.LineToAsync(330, 570);
-            await boardContext.MoveToAsync(360, 30);
-            await boardContext.LineToAsync(360, 570);
-            await boardContext.MoveToAsync(390, 30);
-            await boardContext.LineToAsync(390, 570);
-            await boardContext.MoveToAsync(420, 30);
-            await boardContext.LineToAsync(420, 570);
-            await boardContext.MoveToAsync(450, 30);
-            await boardContext.LineToAsync(450, 570);
-            await boardContext.MoveToAsync(480, 30);
-            await boardContext.LineToAsync(480, 570);
-            await boardContext.MoveToAsync(510, 30);
-            await boardContext.LineToAsync(510, 570);
-            await boardContext.MoveToAsync(540, 30);
-            await boardContext.LineToAsync(540, 570);
-            await boardContext.MoveToAsync(570, 30);
-            await boardContext.LineToAsync(570, 570);
-            await boardContext.StrokeAsync();
-        }
-    }
-
     Move GetMove(double mouseX, double mouseY)
     {
-        for (int i = 0; i < 19; i++)
+        for (int i = 0; i < dimensions; i++)
         {
-            for (int j = 0; j < 19; j++)
+            for (int j = 0; j < dimensions; j++)
             {
-                int x = (i * 30) + 30;
-                int y = (j * 30) + 30;
+                int x = (i * 30) + 40;
+                int y = (j * 30) + 40;
                 if (mouseX < x + 10 && mouseX > x - 10 && mouseY < y + 10 && mouseY > y - 10)
                 {
                     return new Move { row = i, col = j, isWhite = whiteTurn };
@@ -161,7 +63,7 @@
         if (move.isWhite) await currentCanvasContext.SetFillStyleAsync("White");
         else await currentCanvasContext.SetFillStyleAsync("Black");
         await currentCanvasContext.BeginPathAsync();
-        await currentCanvasContext.ArcAsync(move.row * 30 + 30, move.col * 30 + 30, 10, 0, 2 * Math.PI);
+        await currentCanvasContext.ArcAsync(move.row * 30 + 40, move.col * 30 + 40, 10, 0, 2 * Math.PI);
         await currentCanvasContext.ClosePathAsync();
         await currentCanvasContext.FillAsync();
     }
@@ -181,6 +83,7 @@
 
             if (stones != null && currentCanvasContext != null)
             {
+                Console.WriteLine("( " + mouseX + ", " + mouseY + ")");
                 Move m = GetMove(mouseX, mouseY);
                 if (m != null && IsLegalMove(m))
                 {

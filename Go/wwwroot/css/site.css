@@ -76,14 +76,9 @@ tr.red-row td {
     top: 0.5rem;
 }
 
-.board-wrapper {
-    position: relative;
-    width: 600px;
-    height: 600px;
-}
-
-.board-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+.board-canvas-19 {
+    background-image: url("../images/board19.png");
+    width: 620px;
+    height: 620px;
+    background-size: cover;
 }
