@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager NavMan
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 @using Go.Shared.Forms.FormModels
 @using Go.Shared.Models
@@ -98,7 +99,7 @@
         loginObj = new Login();
         show = false;
     }
-    public static void HandleValidSubmit()
+    public async Task HandleValidSubmit()
     {
         string name = loginObj.Username;
         string pw = loginObj.Password;
@@ -116,7 +117,7 @@
         }
         else
         {
-            Globals.CURR_USER = thisUser;
+            await Globals.SetUser(localStorage, thisUser);
 
             // NavMan2.Uri is current relative address. The forced nav refreshes the page.
             NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);

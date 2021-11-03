@@ -1,7 +1,10 @@
-﻿@inject NavigationManager NavMan 
+﻿@inject NavigationManager NavMan
+@inject Blazored.LocalStorage.ILocalStorageService localStorage 
+
 
 @inherits LayoutComponentBase
-@using Shared.Forms 
+@using Shared.Forms
+@using Shared.Models
 
 <div class="page">
     <div style="background-image: none" class="sidebar">
@@ -35,6 +38,7 @@
             </ul>
 </div>
 
+
         <div class="content px-4">
             @Body
         </div>
@@ -42,5 +46,11 @@
 </div>
 
 @code {
+    IUser curr_user;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        curr_user = await Globals.GetUser(localStorage);
+        StateHasChanged();
+    }
 }

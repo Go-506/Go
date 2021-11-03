@@ -1,5 +1,8 @@
-﻿@using Go.Shared.Models.MongoDB
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@using Go.Shared.Models.MongoDB
 @using Go.Shared.Models
+
 
 <div class="top-row pl-4 navbar navbar-dark">
     <center>
@@ -53,8 +56,16 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    private IUser curr_user;
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        curr_user = await Globals.GetUser(localStorage);
+        StateHasChanged();
     }
 }
