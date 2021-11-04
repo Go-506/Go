@@ -149,3 +149,11 @@ tr.red-row td {
     width: 320px;
     background-size: cover;
 }
+
+.inline {
+    display: inline-block;
+}
+
+.turn-options {
+    float: right;
+}
