@@ -6,7 +6,7 @@
 
 <div class="top-row pl-4 navbar navbar-dark">
     <center>
-        <img src="img/Go_Logo_With_Black_Go.png" style="width: 100px ; height: auto;">
+        <img src="images/Go_Logo_With_White_Go.png" style="width: 160px ; height: auto; padding-left: 40px">
     </center>
     
     <!--<button class="button-primary" type="button" @onclick="ToggleNavMenu">
@@ -18,33 +18,33 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" style="color: black" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" style="color: black" aria-hidden="true"></span> Home
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="localgameoptions" Match="NavLinkMatch.All">
-                <span class="oi oi-contrast" aria-hidden="true"></span> Play Local
+            <NavLink class="nav-link" style="color: black" href="localgameoptions" Match="NavLinkMatch.All">
+                <span class="oi oi-contrast" style="color: black" aria-hidden="true"></span> Play Local
             </NavLink>
         </li>
         @if (curr_user is Player or Admin)
         {
             <li class="nav-item px-3">
-                <NavLink class="nav-link" href="onlinegameoptions" Match="NavLinkMatch.All">
-                    <span class="oi oi-wifi" aria-hidden="true"></span> Play Online
+                <NavLink class="nav-link" style="color: black" href="onlinegameoptions" Match="NavLinkMatch.All">
+                    <span class="oi oi-wifi" style="color: black" aria-hidden="true"></span> Play Online
                 </NavLink>
             </li>
         }
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="lessonmenu" Match="NavLinkMatch.All">
-                <span class="oi oi-book" aria-hidden="true"></span> Lessons
+            <NavLink class="nav-link" style="color: black" href="lessonmenu" Match="NavLinkMatch.All">
+                <span class="oi oi-book" style="color: black" aria-hidden="true"></span> Lessons
             </NavLink>
         </li>
         @if (curr_user is Player or Admin)
         {
             <li class="nav-item px-3">
-                <NavLink class="nav-link" href="account" Match="NavLinkMatch.All">
-                    <span class="oi oi-person" aria-hidden="true"></span> My Account
+                <NavLink class="nav-link" style="color: black" href="account" Match="NavLinkMatch.All">
+                    <span class="oi oi-person" style="color: black" aria-hidden="true"></span> My Account
                 </NavLink>
             </li>
         }

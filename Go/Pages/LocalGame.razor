@@ -8,10 +8,15 @@
 @using Shared.Models
 @inject IJSRuntime jsRuntime
 
-<h3>LocalGame</h3>
-<div @ref="divCanvas" @onclick="OnClick" class="board-canvas-19">
-    <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+<br>
+
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-19">
+        <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+    </div>
 </div>
+<br>
+<br>
 
 @code {
     [Parameter]
