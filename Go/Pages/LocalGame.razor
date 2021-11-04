@@ -8,11 +8,11 @@
 @using Shared.Models
 @inject IJSRuntime jsRuntime
 
+<div class="turn-options inline">
+    <div class="inline"><input @bind="turn" /></div>
+    <button @onclick="SkipTurn" class="inline">Pass</button>
+</div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
-    <div class="turn-options inline">
-        <div class="inline"><input @bind="turn" /></div>
-        <button @onclick="SkipTurn" class="inline">Pass</button>
-    </div>
     @if (dimensions.Equals("19"))
     {
         <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-19">
