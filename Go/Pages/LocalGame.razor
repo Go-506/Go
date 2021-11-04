@@ -8,29 +8,30 @@
 @using Shared.Models
 @inject IJSRuntime jsRuntime
 
-<h3 class="inline game-title">Local Game</h3>
-<div class="turn-options inline">
-    <div class="inline"><input @bind="turn" /></div>
-    <button @onclick="SkipTurn" class="inline">Pass</button>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    <div class="turn-options inline">
+        <div class="inline"><input @bind="turn" /></div>
+        <button @onclick="SkipTurn" class="inline">Pass</button>
+    </div>
+    @if (dimensions.Equals("19"))
+    {
+        <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-19">
+            <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+        </div>
+    }
+    @if (dimensions.Equals("13")) { 
+        <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-13">
+            <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
+        </div>
+    }
+    @if (dimensions.Equals("9")) {
+        <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-9">
+            <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+        </div>
+    }
 </div>
-@if (dimensions.Equals("19"))
-{
-    <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-19">
-        <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
-    </div>
-}
-@if (dimensions.Equals("13"))
-{
-    <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-13">
-        <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
-    </div>
-}
-@if (dimensions.Equals("9"))
-{
-    <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-9">
-        <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
-    </div>
-}
+<br>
+<br>
 
 @code {
     [Parameter]

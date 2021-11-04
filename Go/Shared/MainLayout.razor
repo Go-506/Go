@@ -7,7 +7,7 @@
 @using Shared.Models
 
 <div class="page">
-    <div style="background-image: none" class="sidebar">
+    <div style="background-image: url(../images/wood.jpg);" class="sidebar">
         <NavMenu />
     </div>
 
@@ -30,7 +30,9 @@
                 }
                 else
                 {
-                    <li class="headitem" style="font-size:24px">Welcome, @(curr_user.name)! </li>
+                    <li class="headitem" style="font-size: 16px; padding: 5px 5px; color: white;" >
+                        Welcome, @(curr_user.name)!
+                    </li>
                     <li class="headitem">
                         <Go.Shared.Forms.LogoutButton />
                     </li>
