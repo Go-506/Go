@@ -8,20 +8,26 @@
 @using Shared.Models
 @inject IJSRuntime jsRuntime
 
-<h3>LocalGame</h3>
+<h3 class="inline game-title">Local Game</h3>
+<div class="turn-options inline">
+    <div class="inline"><input @bind="turn" /></div>
+    <button @onclick="SkipTurn" class="inline">Pass</button>
+</div>
 @if (dimensions.Equals("19"))
 {
-    <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-19">
+    <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-19">
         <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
     </div>
 }
-@if (dimensions.Equals("13")) { 
-    <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-13">
+@if (dimensions.Equals("13"))
+{
+    <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-13">
         <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
     </div>
 }
-@if (dimensions.Equals("9")) {
-    <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-9">
+@if (dimensions.Equals("9"))
+{
+    <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-9">
         <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
     </div>
 }
@@ -35,6 +41,7 @@
     Canvas2DContext currentCanvasContext;
     List<Move> moves = new List<Move>();
     bool whiteTurn = false;
+    String turn = "Black's Turn";
 
     Board go = new Board(19);
 
@@ -48,6 +55,19 @@
         public int row;
         public int col;
         public bool isWhite;
+    }
+
+    async void SkipTurn()
+    {
+        whiteTurn = !whiteTurn;
+        if (whiteTurn)
+        {
+            turn = "White's Turn";
+        }
+        else
+        {
+            turn = "Black's Turn";
+        }
     }
 
     Move GetMove(double mouseX, double mouseY)
@@ -88,7 +108,7 @@
     }
 
 
-    async void OnClick(MouseEventArgs eventArgs)
+    async Task OnClick(MouseEventArgs eventArgs)
     {
         double mouseX = 0;
         double mouseY = 0;
@@ -106,8 +126,16 @@
                 Move m = GetMove(mouseX, mouseY);
                 if (m != null && IsLegalMove(m))
                 {
-                    DrawStone(m);
                     whiteTurn = !whiteTurn;
+                    if (whiteTurn)
+                    {
+                        turn = "White's Turn";
+                    }
+                    else
+                    {
+                        turn = "Black's Turn";
+                    }
+                    DrawStone(m);
                 }
             }
 
