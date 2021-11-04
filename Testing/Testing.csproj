@@ -18,10 +18,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Go\Go.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Blazored.LocalStorage" />
+  </ItemGroup>
 </Project>
