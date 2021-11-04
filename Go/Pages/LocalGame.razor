@@ -8,23 +8,26 @@
 @using Shared.Models
 @inject IJSRuntime jsRuntime
 
-<h3>LocalGame</h3>
-@if (dimensions.Equals("19"))
-{
-    <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-19">
-        <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
-    </div>
-}
-@if (dimensions.Equals("13")) { 
-    <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-13">
-        <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
-    </div>
-}
-@if (dimensions.Equals("9")) {
-    <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-9">
-        <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
-    </div>
-}
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    @if (dimensions.Equals("19"))
+    {
+        <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-19">
+            <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+        </div>
+    }
+    @if (dimensions.Equals("13")) { 
+        <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-13">
+            <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
+        </div>
+    }
+    @if (dimensions.Equals("9")) {
+        <div @ref="divCanvas" @onclick="OnClick" class="board-canvas-9">
+            <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+        </div>
+    }
+</div>
+<br>
+<br>
 
 @code {
     [Parameter]
