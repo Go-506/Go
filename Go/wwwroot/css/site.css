@@ -131,3 +131,17 @@ tr.red-row td {
     width: 620px;
     background-size: cover;
 }
+
+.board-canvas-13 {
+    background-image: url("../images/board13.png");
+    height: 440px;
+    width: 440px;
+    background-size: cover;
+}
+
+.board-canvas-9 {
+    background-image: url("../images/board9.png");
+    height: 320px;
+    width: 320px;
+    background-size: cover;
+}
