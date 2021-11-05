@@ -13,10 +13,13 @@ namespace Go.Shared.Models
         private bool playable = true;
         private bool blackToPlay = true;
         public ArrayList capturedStones;
+        //[0]: black score, [1]: white score
+        public int[] score;
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
             capturedStones = new ArrayList();
+            score = new int[] { 0, 0 };
         }
 
         public int[ , ] getBoard()
@@ -86,6 +89,9 @@ namespace Go.Shared.Models
 
             //update captured stones
             capturedStones = captured;
+
+            //update board score
+            score = getScore(board);
 
             return true;
         }
@@ -416,6 +422,32 @@ namespace Go.Shared.Models
                 }
             }
             return contains;
+        }
+
+        /// <summary>
+        /// Return the score for the given board. The score for each player
+        /// is simply the number of stones they have on the board.
+        /// </summary>
+        /// <param name="board"></param>
+        public int[] getScore(int[,] board)
+        {
+            int[] boardScore = new int[] { 0, 0 };
+            for (int r = 0; r < board.GetLength(0); r++)
+            {
+                for (int c = 0; c < board.GetLength(1); c++)
+                {
+                    if (board[r,c] == 1)
+                    {
+                        boardScore[0] += 1;
+                    }
+
+                    if (board[r,c] == -1)
+                    {
+                        boardScore[1] += 1;
+                    }
+                }
+            }
+            return boardScore;
         }
     }
 }
