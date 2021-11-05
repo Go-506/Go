@@ -53,6 +53,9 @@ namespace Go.Shared.Models
             if (captured != null)
             {
                 blackToPlay = !blackToPlay;
+                int[] newScore = getScore(this.board);
+                this.score[0] = newScore[0];
+                this.score[1] = newScore[1];
             }
             return captured;
         }
