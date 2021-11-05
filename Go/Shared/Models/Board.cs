@@ -12,8 +12,8 @@ namespace Go.Shared.Models
         public int[,] getBoard();
         public bool getPlayable();
         public bool getBlackToPlay();
-        public bool playMove(int[] move);
-        public bool moveIsLegal(int[] move);
+        public ArrayList playMove(int[] move);
+        public ArrayList moveIsLegal(int[] move);
     }
     public class Board: IBoard
     {

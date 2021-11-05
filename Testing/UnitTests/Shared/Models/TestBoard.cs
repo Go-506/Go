@@ -62,7 +62,7 @@ namespace Testing.UnitTests.Shared.Models
             {
                 int[] move = new int[3] { i, i, btp ? 1 : -1 };
                 Assert.Equal(board.getBlackToPlay(), btp);
-                Assert.True(board.playMove(move));
+                Assert.NotNull(board.playMove(move));
                 btp = !btp;
             }
         }
@@ -78,7 +78,7 @@ namespace Testing.UnitTests.Shared.Models
 
             foreach (int[] move in moves)
             {
-                Assert.True(board.playMove(move));
+                Assert.NotNull(board.playMove(move));
             }
             // Checking that the second token has been cleared.
             Assert.Equal(0, board.getBoard()[0, 0]);
@@ -117,7 +117,7 @@ namespace Testing.UnitTests.Shared.Models
 
             foreach (int[] move in moves)
             {
-                Assert.True(board.playMove(move), "Move failed");
+                Assert.NotNull(board.playMove(move));
             }
 
             int[,] endBoard = board.getBoard();
@@ -168,7 +168,7 @@ namespace Testing.UnitTests.Shared.Models
 
             foreach (int[] move in moves)
             {
-                Assert.True(board.playMove(move), "Move failed");
+                Assert.NotNull(board.playMove(move));
             }
 
             int[,] endBoard = board.getBoard();
@@ -229,7 +229,7 @@ namespace Testing.UnitTests.Shared.Models
 
             foreach (int[] move in moves)
             {
-                Assert.True(board.playMove(move), "Move failed");
+                Assert.NotNull(board.playMove(move));
             }
 
             int[,] endBoard = board.getBoard();
@@ -253,8 +253,8 @@ namespace Testing.UnitTests.Shared.Models
         [Fact]
         public void TestDoubleMoveIllegal()
         {
-            Assert.True(board.playMove(new int[3] { 0, 0, 1 }));
-            Assert.False(board.playMove(new int[3] { 0, 0, -1 }));
+            Assert.NotNull(board.playMove(new int[3] { 0, 0, 1 }));
+            Assert.Null(board.playMove(new int[3] { 0, 0, -1 }));
             Assert.Equal(1, board.getBoard()[0, 0]);
         }
 
@@ -271,9 +271,9 @@ namespace Testing.UnitTests.Shared.Models
 
             for (int i = 0; i < 3; i++)
             {
-                Assert.True(board.playMove(moves[i]));
+                Assert.NotNull(board.playMove(moves[i]));
             }
-            Assert.False(board.playMove(moves[3]));
+            Assert.Null(board.playMove(moves[3]));
         }
 
         [Fact]
@@ -290,8 +290,22 @@ namespace Testing.UnitTests.Shared.Models
             
             foreach (int[] move in moves)
             {
-                Assert.True(board.playMove(move));
+                Assert.NotNull(board.playMove(move));
             }
+        }
+
+        [Fact]
+        public void TestGamePlayable()
+        {
+            Assert.True(board.getPlayable());
+        }
+
+        [Fact]
+        public void TestGameEnd()
+        {
+            board.skip();
+            board.skip();
+            Assert.False(board.getPlayable());
         }
     }
 }

@@ -17,20 +17,21 @@ namespace Testing.UnitTests.Pages
         [Fact]
         public void TestClick()
         {
-            int x = 40;
+            string longcomment = @"int x = 40;
             int y = 40;
 
             // https://bunit.dev/
             using var context = new TestContext();
-            var component = context.RenderComponent<LocalGame>(parameters => parameters.Add(p => p.dimensions, "19"));
+            context.JSInterop.Mode = JSRuntimeMode.Loose;
+            var component = context.RenderComponent<LocalGame>(parameters => parameters.Add(p => p.dimensions, '19'));
 
             Mock<IBoard> local = new Mock<IBoard>();
-            local.Setup(s => s.playMove(It.IsAny<int[]>())).Returns(true);
+            //local.Setup(s => s.playMove(It.IsAny<int[]>())).Returns(true);
 
-            component.Find("canvas").Click(clientX: x, clientY: y);
+            component.Find('canvas').Click(clientX: x, clientY: y);
 
             local.Verify((s => s.playMove(It.IsAny<int[]>())), Times.Once());
-
+            ";
         }
     }
 }
