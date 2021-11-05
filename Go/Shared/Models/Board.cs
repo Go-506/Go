@@ -38,14 +38,14 @@ namespace Go.Shared.Models
         /// </summary>
         /// <param name="move">move[0]: the x coord. move[1]: the y coord. move[2]: 1 if black, -1 if white</param>
         /// <returns>Move successful</returns>
-        public bool playMove(int[] move)
+        public ArrayList playMove(int[] move)
         {
-            bool legal = moveIsLegal(move);
-            if (legal)
+            ArrayList captured = moveIsLegal(move);
+            if (captured != null)
             {
                 blackToPlay = !blackToPlay;
             }
-            return legal;
+            return captured;
         }
 
         /// <summary>
@@ -57,14 +57,14 @@ namespace Go.Shared.Models
         /// </summary>
         /// <param name="move">move[0]: the x coord. move[1]: the y coord. move[2]: 1 if black, -1 if white</param>
         /// <returns></returns>
-        public bool moveIsLegal(int[] move)
+        public ArrayList moveIsLegal(int[] move)
         {
             Console.WriteLine("a");
             //check coord not empty
             if (board[move[0], move[1]] != 0)
             {
                 Console.WriteLine(board[move[0], move[1]]);
-                return false;
+                return null;
             }
 
             //consider stones this move will capture (but don't update the main board)
@@ -76,14 +76,14 @@ namespace Go.Shared.Models
             if (getLiberties(hypotheticalCapture, move).Count == 0)
             {
                 Console.WriteLine("2");
-                return false;
+                return null;
             }
 
             //TODO: check if move will create previous board state
 
             //update main board if everything works
             board = hypotheticalCapture;
-            return true;
+            return captured;
         }
 
         /// <summary>

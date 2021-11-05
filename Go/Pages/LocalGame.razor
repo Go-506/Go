@@ -6,6 +6,7 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
 @using Shared.Models
+@using System.Collections;
 @inject IJSRuntime jsRuntime
 
 <div class="turn-options inline">
@@ -19,12 +20,14 @@
             <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
         </div>
     }
-    @if (dimensions.Equals("13")) { 
+    @if (dimensions.Equals("13"))
+    {
         <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-13">
             <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
         </div>
     }
-    @if (dimensions.Equals("9")) {
+    @if (dimensions.Equals("9"))
+    {
         <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-9">
             <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
         </div>
@@ -43,6 +46,7 @@
     List<Move> moves = new List<Move>();
     bool whiteTurn = false;
     String turn = "Black's Turn";
+    ArrayList thisCaptured = new ArrayList();
 
     Board go = new Board(19);
 
@@ -95,10 +99,20 @@
         {
             color = 1;
         }
-        return go.playMove(new int[] { move.row, move.col, color });
+        ArrayList captured = go.playMove(new int[] { move.row, move.col, color });
+
+        if (captured == null)
+        {
+            return false;
+        }
+        else
+        {
+            thisCaptured = captured;
+            return true;
+        }
     }
 
-    async void DrawStone(Move move)
+    async Task DrawStone(Move move)
     {
         if (move.isWhite) await currentCanvasContext.SetFillStyleAsync("White");
         else await currentCanvasContext.SetFillStyleAsync("Black");
@@ -108,6 +122,18 @@
         await currentCanvasContext.FillAsync();
     }
 
+    async Task RemoveStones()
+    {
+        if (thisCaptured != null || thisCaptured.Count != 0)
+        {
+            foreach (int[] coord in thisCaptured)
+            {
+                int x = (coord[0] * 30) + 30;
+                int y = (coord[1] * 30) + 30;
+                await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
+            }
+        }
+    }
 
     async Task OnClick(MouseEventArgs eventArgs)
     {
@@ -136,7 +162,8 @@
                     {
                         turn = "Black's Turn";
                     }
-                    DrawStone(m);
+                    await DrawStone(m);
+                    await RemoveStones();
                 }
             }
 
