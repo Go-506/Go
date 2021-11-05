@@ -18,7 +18,6 @@ namespace Go.Shared.Models
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
-            capturedStones = new ArrayList();
             score = new int[] { 0, 0 };
             passesInARow = 0;
         }
