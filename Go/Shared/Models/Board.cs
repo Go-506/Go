@@ -12,7 +12,6 @@ namespace Go.Shared.Models
         private int[ , ] board;
         private bool playable = true;
         private bool blackToPlay = true;
-        public ArrayList capturedStones;
         //[0]: black score, [1]: white score
         public int[] score;
         private int passesInARow;
@@ -49,17 +48,14 @@ namespace Go.Shared.Models
         /// </summary>
         /// <param name="move">move[0]: the x coord. move[1]: the y coord. move[2]: 1 if black, -1 if white</param>
         /// <returns>Move successful</returns>
-        public bool playMove(int[] move)
+        public ArrayList playMove(int[] move)
         {
-            if (playable)
+            ArrayList captured = moveIsLegal(move);
+            if (captured != null)
             {
-                bool legal = moveIsLegal(move);
-                if (legal)
-                {
-                    blackToPlay = !blackToPlay;
-                }
-                return legal;
+                blackToPlay = !blackToPlay;
             }
+            return captured;
         }
 
         /// <summary>
@@ -71,12 +67,12 @@ namespace Go.Shared.Models
         /// </summary>
         /// <param name="move">move[0]: the x coord. move[1]: the y coord. move[2]: 1 if black, -1 if white</param>
         /// <returns></returns>
-        public bool moveIsLegal(int[] move)
+        public ArrayList moveIsLegal(int[] move)
         {
             //check coord not empty
             if (board[move[0], move[1]] != 0)
             {
-                return false;
+                return null;
             }
 
             //consider stones this move will capture (but don't update the main board)
@@ -87,21 +83,14 @@ namespace Go.Shared.Models
             //check if stone will be captured even after removing enemy stones it captures
             if (getLiberties(hypotheticalCapture, move).Count == 0)
             {
-                return false;
+                return null;
             }
 
             //TODO: check if move will create previous board state
 
             //update main board if everything works
             board = hypotheticalCapture;
-
-            //update captured stones
-            capturedStones = captured;
-
-            //update board score
-            score = getScore(board);
-
-            return true;
+            return captured;
         }
 
         /// <summary>
