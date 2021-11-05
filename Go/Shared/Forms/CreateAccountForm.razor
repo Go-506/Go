@@ -1,11 +1,12 @@
 ﻿@inject NavigationManager NavMan
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 @using Go.Shared.Forms.FormModels
 @using Go.Shared.Models
 @using Go.Shared.Models.MongoDB
 @using MongoDB.Driver
 
-<button @onclick="Show" class="btn-primary">Create Account</button>
+<a class="headtext" @onclick="Show" style="color:white"><span class="oi oi-person" style="color:white"></span> Signup</a>
 @if (show)
 {
     <div class="modal fade show d-block" id="createAccount" tabindex="-1" role="dialog">
@@ -70,12 +71,12 @@
         createAccountObj = new CreateAccount();
         show = false;
     }
-    public static void HandleValidSubmit()
+    public async Task HandleValidSubmit()
     {
         Player newUser = new Player(createAccountObj.Username, createAccountObj.Email, createAccountObj.Password);
         newUser.hashPassword();
         UserDBInterface.InsertUser(newUser);
-        Globals.CURR_USER = newUser;
+        await Globals.SetUser(localStorage, newUser);
         // Force refresh
         IUser thisUser = Globals.USERS.Find(x => x.name.Equals("A")).FirstOrDefault();
         NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);

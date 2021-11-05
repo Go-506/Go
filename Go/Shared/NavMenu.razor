@@ -1,52 +1,54 @@
-﻿@using Go.Shared.Models.MongoDB
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@using Go.Shared.Models.MongoDB
 @using Go.Shared.Models
 
+
 <div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Go Properties</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+    <center>
+        <img src="images/Go_Logo_With_White_Go.png" style="width: 160px ; height: auto; padding-left: 40px">
+    </center>
+    
+    <!--<button class="button-primary" type="button" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
-    </button>
+    </button>-->
+
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" style="color: black" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" style="color: black" aria-hidden="true"></span> Home
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="localgameoptions" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Play Local
+            <NavLink class="nav-link" style="color: black" href="localgameoptions" Match="NavLinkMatch.All">
+                <span class="oi oi-contrast" style="color: black" aria-hidden="true"></span> Play Local
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="onlinegameoptions" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Play Online
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="lessonmenu" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Lessons
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="account" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> My Account
-            </NavLink>
-        </li>
-        @if (Globals.CURR_USER != null && Globals.CURR_USER is Guest)
+        @if (curr_user is Player or Admin)
         {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" style="color: black" href="onlinegameoptions" Match="NavLinkMatch.All">
+                    <span class="oi oi-wifi" style="color: black" aria-hidden="true"></span> Play Online
+                </NavLink>
+            </li>
         }
-        else if (Globals.CURR_USER != null && Globals.CURR_USER is Player)
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" style="color: black" href="lessonmenu" Match="NavLinkMatch.All">
+                <span class="oi oi-book" style="color: black" aria-hidden="true"></span> Lessons
+            </NavLink>
+        </li>
+        @if (curr_user is Player or Admin)
         {
-
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" style="color: black" href="account" Match="NavLinkMatch.All">
+                    <span class="oi oi-person" style="color: black" aria-hidden="true"></span> My Account
+                </NavLink>
+            </li>
         }
-        else if (Globals.CURR_USER != null && Globals.CURR_USER is Admin)
-        {
-
-        }
-    </ul>
+        </ul>
 </div>
 
 @code {
@@ -54,8 +56,16 @@
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    private IUser curr_user;
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        curr_user = await Globals.GetUser(localStorage);
+        StateHasChanged();
     }
 }

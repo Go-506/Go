@@ -1,10 +1,13 @@
-﻿@inject NavigationManager NavMan 
+﻿@inject NavigationManager NavMan
+@inject Blazored.LocalStorage.ILocalStorageService localStorage 
+
 
 @inherits LayoutComponentBase
-@using Shared.Forms 
+@using Shared.Forms
+@using Shared.Models
 
 <div class="page">
-    <div class="sidebar">
+    <div style="background-image: url(../images/wood.jpg);" class="sidebar">
         <NavMenu />
     </div>
 
@@ -13,18 +16,30 @@
             <!-- If not logged in (CURR_USER = null), then load create account and login buttons -->
             <!-- Else, welcome the current user and give them the option to log out -->
             <!-- Updating this requires refreshing the page, hence the use of NavigationManager in Shared.Forms.LogoutButton, etc. -->
-            @if (Globals.CURR_USER == null)
-            {
-            <Go.Shared.Forms.CreateAccountForm/>
-            <div class="divider"/>
-            <Go.Shared.Forms.LoginForm/>
-            } else
-            {
-                <div>Welcome, @(Globals.CURR_USER.name)!</div>
-                <div class="divider"/>
-                <Go.Shared.Forms.LogoutButton/>
-            }
-        </div>
+            <ul class="header">
+                @if (curr_user == null)
+                {
+                    <li class="headitem">
+                        <Go.Shared.Forms.CreateAccountForm />
+                    </li>
+                    <li class="headitem">
+                        <Go.Shared.Forms.LoginForm />
+                    </li>
+
+
+                }
+                else
+                {
+                    <li class="headitem" style="font-size: 16px; padding: 5px 5px; color: white;" >
+                        Welcome, @(curr_user.name)!
+                    </li>
+                    <li class="headitem">
+                        <Go.Shared.Forms.LogoutButton />
+                    </li>
+                }
+            </ul>
+</div>
+
 
         <div class="content px-4">
             @Body
@@ -33,5 +48,11 @@
 </div>
 
 @code {
+    IUser curr_user;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        curr_user = await Globals.GetUser(localStorage);
+        StateHasChanged();
+    }
 }
