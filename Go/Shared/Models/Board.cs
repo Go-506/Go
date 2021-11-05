@@ -15,11 +15,13 @@ namespace Go.Shared.Models
         public ArrayList capturedStones;
         //[0]: black score, [1]: white score
         public int[] score;
+        private int passesInARow;
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
             capturedStones = new ArrayList();
             score = new int[] { 0, 0 };
+            passesInARow = 0;
         }
 
         public int[ , ] getBoard()
@@ -30,6 +32,11 @@ namespace Go.Shared.Models
         public bool getPlayable()
         {
             return playable;
+        }
+
+        public void setPlayable(Boolean play)
+        {
+            playable = play;
         }
 
         public bool getBlackToPlay()
@@ -44,12 +51,15 @@ namespace Go.Shared.Models
         /// <returns>Move successful</returns>
         public bool playMove(int[] move)
         {
-            bool legal = moveIsLegal(move);
-            if (legal)
+            if (playable)
             {
-                blackToPlay = !blackToPlay;
+                bool legal = moveIsLegal(move);
+                if (legal)
+                {
+                    blackToPlay = !blackToPlay;
+                }
+                return legal;
             }
-            return legal;
         }
 
         /// <summary>
@@ -63,11 +73,9 @@ namespace Go.Shared.Models
         /// <returns></returns>
         public bool moveIsLegal(int[] move)
         {
-            Console.WriteLine("a");
             //check coord not empty
             if (board[move[0], move[1]] != 0)
             {
-                Console.WriteLine(board[move[0], move[1]]);
                 return false;
             }
 

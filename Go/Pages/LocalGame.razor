@@ -43,6 +43,7 @@
     List<Move> moves = new List<Move>();
     bool whiteTurn = false;
     String turn = "Black's Turn";
+    int passesInARow = 0;
 
     Board go = new Board(19);
 
@@ -60,6 +61,7 @@
 
     async void SkipTurn()
     {
+        passesInARow++;
         whiteTurn = !whiteTurn;
         if (whiteTurn)
         {
@@ -68,6 +70,11 @@
         else
         {
             turn = "Black's Turn";
+        }
+
+        if (passesInARow >= 2)
+        {
+            go.setPlayable(false);
         }
     }
 
@@ -95,7 +102,15 @@
         {
             color = 1;
         }
-        return go.playMove(new int[] { move.row, move.col, color });
+
+        bool play = go.playMove(new int[] { move.row, move.col, color });
+
+        if (play)
+        {
+            passesInARow = 0;
+        }
+
+        return play;
     }
 
     async void DrawStone(Move move)
@@ -123,7 +138,6 @@
 
             if (stones != null && currentCanvasContext != null)
             {
-                Console.WriteLine("( " + mouseX + ", " + mouseY + ")");
                 Move m = GetMove(mouseX, mouseY);
                 if (m != null && IsLegalMove(m))
                 {
