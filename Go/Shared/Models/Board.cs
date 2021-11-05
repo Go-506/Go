@@ -12,10 +12,14 @@ namespace Go.Shared.Models
         private int[ , ] board;
         private bool playable = true;
         private bool blackToPlay = true;
-
+        //[0]: black score, [1]: white score
+        public int[] score;
+        private int passesInARow;
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
+            score = new int[] { 0, 0 };
+            passesInARow = 0;
         }
 
         public int[ , ] getBoard()
@@ -28,9 +32,19 @@ namespace Go.Shared.Models
             return playable;
         }
 
+        public void setPlayable(Boolean play)
+        {
+            playable = play;
+        }
+
         public bool getBlackToPlay()
         {
             return blackToPlay;
+        }
+
+        public void skip()
+        {
+            blackToPlay = !blackToPlay;
         }
 
         /// <summary>
@@ -38,14 +52,17 @@ namespace Go.Shared.Models
         /// </summary>
         /// <param name="move">move[0]: the x coord. move[1]: the y coord. move[2]: 1 if black, -1 if white</param>
         /// <returns>Move successful</returns>
-        public bool playMove(int[] move)
+        public ArrayList playMove(int[] move)
         {
-            bool legal = moveIsLegal(move);
-            if (legal)
+            ArrayList captured = moveIsLegal(move);
+            if (captured != null)
             {
                 blackToPlay = !blackToPlay;
+                int[] newScore = getScore(this.board);
+                this.score[0] = newScore[0];
+                this.score[1] = newScore[1];
             }
-            return legal;
+            return captured;
         }
 
         /// <summary>
@@ -57,14 +74,12 @@ namespace Go.Shared.Models
         /// </summary>
         /// <param name="move">move[0]: the x coord. move[1]: the y coord. move[2]: 1 if black, -1 if white</param>
         /// <returns></returns>
-        public bool moveIsLegal(int[] move)
+        public ArrayList moveIsLegal(int[] move)
         {
-            Console.WriteLine("a");
             //check coord not empty
             if (board[move[0], move[1]] != 0)
             {
-                Console.WriteLine(board[move[0], move[1]]);
-                return false;
+                return null;
             }
 
             //consider stones this move will capture (but don't update the main board)
@@ -75,15 +90,14 @@ namespace Go.Shared.Models
             //check if stone will be captured even after removing enemy stones it captures
             if (getLiberties(hypotheticalCapture, move).Count == 0)
             {
-                Console.WriteLine("2");
-                return false;
+                return null;
             }
 
             //TODO: check if move will create previous board state
 
             //update main board if everything works
             board = hypotheticalCapture;
-            return true;
+            return captured;
         }
 
         /// <summary>
@@ -412,6 +426,32 @@ namespace Go.Shared.Models
                 }
             }
             return contains;
+        }
+
+        /// <summary>
+        /// Return the score for the given board. The score for each player
+        /// is simply the number of stones they have on the board.
+        /// </summary>
+        /// <param name="board"></param>
+        public int[] getScore(int[,] board)
+        {
+            int[] boardScore = new int[] { 0, 0 };
+            for (int r = 0; r < board.GetLength(0); r++)
+            {
+                for (int c = 0; c < board.GetLength(1); c++)
+                {
+                    if (board[r,c] == 1)
+                    {
+                        boardScore[0] += 1;
+                    }
+
+                    if (board[r,c] == -1)
+                    {
+                        boardScore[1] += 1;
+                    }
+                }
+            }
+            return boardScore;
         }
     }
 }
