@@ -12,10 +12,15 @@ namespace Go.Shared.Models
         private int[ , ] board;
         private bool playable = true;
         private bool blackToPlay = true;
-
+        //[0]: black score, [1]: white score
+        public int[] score;
+        private int passesInARow;
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
+            capturedStones = new ArrayList();
+            score = new int[] { 0, 0 };
+            passesInARow = 0;
         }
 
         public int[ , ] getBoard()
@@ -26,6 +31,11 @@ namespace Go.Shared.Models
         public bool getPlayable()
         {
             return playable;
+        }
+
+        public void setPlayable(Boolean play)
+        {
+            playable = play;
         }
 
         public bool getBlackToPlay()
@@ -59,11 +69,9 @@ namespace Go.Shared.Models
         /// <returns></returns>
         public ArrayList moveIsLegal(int[] move)
         {
-            Console.WriteLine("a");
             //check coord not empty
             if (board[move[0], move[1]] != 0)
             {
-                Console.WriteLine(board[move[0], move[1]]);
                 return null;
             }
 
@@ -75,7 +83,6 @@ namespace Go.Shared.Models
             //check if stone will be captured even after removing enemy stones it captures
             if (getLiberties(hypotheticalCapture, move).Count == 0)
             {
-                Console.WriteLine("2");
                 return null;
             }
 
@@ -412,6 +419,32 @@ namespace Go.Shared.Models
                 }
             }
             return contains;
+        }
+
+        /// <summary>
+        /// Return the score for the given board. The score for each player
+        /// is simply the number of stones they have on the board.
+        /// </summary>
+        /// <param name="board"></param>
+        public int[] getScore(int[,] board)
+        {
+            int[] boardScore = new int[] { 0, 0 };
+            for (int r = 0; r < board.GetLength(0); r++)
+            {
+                for (int c = 0; c < board.GetLength(1); c++)
+                {
+                    if (board[r,c] == 1)
+                    {
+                        boardScore[0] += 1;
+                    }
+
+                    if (board[r,c] == -1)
+                    {
+                        boardScore[1] += 1;
+                    }
+                }
+            }
+            return boardScore;
         }
     }
 }
