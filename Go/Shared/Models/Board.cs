@@ -6,7 +6,16 @@ using System.Collections;
 
 namespace Go.Shared.Models
 {
-    public class Board
+
+    public interface IBoard
+    {
+        public int[,] getBoard();
+        public bool getPlayable();
+        public bool getBlackToPlay();
+        public ArrayList playMove(int[] move);
+        public ArrayList moveIsLegal(int[] move);
+    }
+    public class Board: IBoard
     {
         //1 means black stone; 0 means empty; -1 means white stone
         private int[ , ] board;

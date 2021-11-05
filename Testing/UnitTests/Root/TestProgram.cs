@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using MongoDB.Driver;
 using Go.Shared.Models;
+using Go.Shared.Models.MongoDB;
 
 using Go;
 using Moq;
@@ -15,46 +16,47 @@ namespace Testing.UnitTests.Root
 {
     public class TestProgram
     {
+
         [Fact]
         public void MongoUrlExists()
         {
-            Assert.IsType<string>(Go.Globals.MONGO_URL);
+            Assert.IsType<string>(Globals.MONGO_URL);
         }
 
         [Fact]
         public void MongoUrlIsValid()
         {
-            Assert.True(Uri.IsWellFormedUriString(Go.Globals.MONGO_URL, UriKind.Absolute));
+            Assert.True(Uri.IsWellFormedUriString(Globals.MONGO_URL, UriKind.Absolute));
         }
 
         [Fact]
         public void MongoClientInitialized()
         {
-            Assert.IsType<MongoClient>(Go.Globals.MONGO_CLIENT);
+            Assert.IsType<MongoClient>(Globals.MONGO_CLIENT);
         }
 
         [Fact]
         public void MongoDBInitialized()
         {
-            Assert.True(Go.Globals.DB is IMongoDatabase);
+            Assert.True(Globals.DB is IMongoDatabase);
         }
 
         [Fact]
         public void UserInterfaceInitialized()
         {
-            Assert.True(Go.Globals.USERS is IMongoCollection<IUser>);
+            Assert.True(Globals.USERS is IMongoCollection<IUser>);
         }
 
         [Fact]
         public void LessonInterfaceInitialized()
         {
-            Assert.True(Go.Globals.LESSONS is IMongoCollection<Lesson>);
+            Assert.True(Globals.LESSONS is IMongoCollection<Lesson>);
         }
 
         [Fact]
         public void GameInterfaceInitialized()
         {
-            Assert.True(Go.Globals.GAMES is IMongoCollection<Game>);
+            Assert.True(Globals.GAMES is IMongoCollection<Game>);
         }
 
 
