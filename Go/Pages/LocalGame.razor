@@ -6,28 +6,96 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
 @using Shared.Models
+@using System.Collections;
+@inject NavigationManager NavMan  
 @inject IJSRuntime jsRuntime
 
-<h3>LocalGame</h3>
-<div @ref="divCanvas" @onclick="OnClick" class="board-canvas-19">
-    <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+<div class="turn-options inline">
+    <div class="inline"><input @bind="turn" /></div>
+    <button @onclick="SkipTurn" class="inline">Pass</button>
 </div>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    @if (dimensions.Equals("19"))
+    {
+        <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-19">
+            <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+        </div>
+    }
+    @if (dimensions.Equals("13"))
+    {
+        <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-13">
+            <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
+        </div>
+    }
+    @if (dimensions.Equals("9"))
+    {
+        <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-9">
+            <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+        </div>
+    }
+    
+    <div class="@(gameOverClass)">
+        <div class="modal fade show d-block" id="login" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="titleLabel">Game Over</h5>
+                        <button type="button" class="close" @onclick="Close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    @if (go.score[0] > go.score[1])
+                    {
+                        <div>Black Wins</div>
+                    }
+                    @if (go.score[0] < go.score[1])
+                    {
+                        <div>White Wins</div>;
+                    }
+                    @if (go.score[0] == go.score[1])
+                    {
+                        <div>Draw!</div>
+                    }
+                    <button type="button" @onclick="Reset">RESET</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div class="inline">Black's Score: </div>
+    <input class="inline" @bind="go.score[0]" />
+</div>
+<div>
+    <div class="inline">White's Score: </div>
+    <input class="inline" @bind="go.score[1]" />
+</div>
+<br>
+<br>
 
 @code {
     [Parameter]
     public String dimensions { get; set; }
+    public static NavigationManager NavMan2;
     int dim;
     ElementReference divCanvas;
     Blazor.Extensions.BECanvasComponent stones;
     Canvas2DContext currentCanvasContext;
     List<Move> moves = new List<Move>();
     bool whiteTurn = false;
+    String turn = "Black's Turn";
+    ArrayList thisCaptured = new ArrayList();
+    int passesInARow = 0;
+    bool gameOver = false;
+    string gameOverClass = "hidden";
 
     Board go = new Board(19);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         dim = Int32.Parse(dimensions);
+        NavMan2 = NavMan;
     }
 
     class Move
@@ -35,6 +103,40 @@
         public int row;
         public int col;
         public bool isWhite;
+    }
+
+
+    private void Close()
+    {
+        gameOverClass= "hidden";
+    }
+
+    private void Reset()
+    {
+        NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);
+        Close();
+    }
+
+    async void SkipTurn()
+    {
+        passesInARow++;
+        whiteTurn = !whiteTurn;
+        go.skip();
+        if (whiteTurn)
+        {
+            turn = "White's Turn";
+        }
+        else
+        {
+            turn = "Black's Turn";
+        }
+
+        if (passesInARow >= 2)
+        {
+            go.setPlayable(false);
+            gameOver = true;
+            gameOverClass = "";
+        }
     }
 
     Move GetMove(double mouseX, double mouseY)
@@ -61,10 +163,21 @@
         {
             color = 1;
         }
-        return go.playMove(new int[] { move.row, move.col, color });
+        ArrayList captured = go.playMove(new int[] { move.row, move.col, color });
+
+        if (captured == null)
+        {
+            return false;
+        }
+        else
+        {
+            thisCaptured = captured;
+            passesInARow = 0;
+            return true;
+        }
     }
 
-    async void DrawStone(Move move)
+    async Task DrawStone(Move move)
     {
         if (move.isWhite) await currentCanvasContext.SetFillStyleAsync("White");
         else await currentCanvasContext.SetFillStyleAsync("Black");
@@ -74,9 +187,25 @@
         await currentCanvasContext.FillAsync();
     }
 
-
-    async void OnClick(MouseEventArgs eventArgs)
+    async Task RemoveStones()
     {
+        if (thisCaptured != null || thisCaptured.Count != 0)
+        {
+            foreach (int[] coord in thisCaptured)
+            {
+                int x = (coord[0] * 30) + 30;
+                int y = (coord[1] * 30) + 30;
+                await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
+            }
+        }
+    }
+
+    async Task OnClick(MouseEventArgs eventArgs)
+    {
+        if (gameOver)
+        {
+            return;
+        }
         double mouseX = 0;
         double mouseY = 0;
         if (divCanvas.Id?.Length > 0)
@@ -89,12 +218,20 @@
 
             if (stones != null && currentCanvasContext != null)
             {
-                Console.WriteLine("( " + mouseX + ", " + mouseY + ")");
                 Move m = GetMove(mouseX, mouseY);
                 if (m != null && IsLegalMove(m))
                 {
-                    DrawStone(m);
                     whiteTurn = !whiteTurn;
+                    if (whiteTurn)
+                    {
+                        turn = "White's Turn";
+                    }
+                    else
+                    {
+                        turn = "Black's Turn";
+                    }
+                    await DrawStone(m);
+                    await RemoveStones();
                 }
             }
 

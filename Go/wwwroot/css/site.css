@@ -8,20 +8,23 @@ a, .btn-link {
     color: #0366d6;
 }
 
+
 /*Side navigation bar*/
 .sidebar {
-    background-color: dimgray;
+    
 }
 
 /*Header of sidebar*/
 div.top-row.pl-4 {
-    background-color: darkgray;
+    height: 55px;
+    background-color: #2b2b2b;
+    /*border-bottom: 4px solid black;*/
 }
 
 /*Clickable Buttons*/
 .btn-primary {
     color: white;
-    background-color: #555555;
+    background-color: #2b2b2b;
     border: none;
     font-size: 16px;
     border-radius: 8px;
@@ -30,7 +33,8 @@ div.top-row.pl-4 {
 
 /*Top Banner*/
 div.top-row.px-4 {
-    background-image: url(../img/wood.jpg);
+    background-color: #2b2b2b;
+    /*background-image: url(../images/wood.jpg);*/
 }
 
 /*List used for header (login logout)*/
@@ -52,13 +56,13 @@ li a.headtext {
         display: block;
         color: white;
         text-align: center;
-        padding: 5px 10px;
+        padding: 5px 5px;
         text-decoration: none;
 }
 
 /*a element in header when hovered over*/
 li a:hover.headtext {
-    background-color: #D3D3D3;
+    background-color: dimgray;
     cursor: pointer;
 }
 
@@ -130,4 +134,30 @@ tr.red-row td {
     height: 620px;
     width: 620px;
     background-size: cover;
+}
+
+.board-canvas-13 {
+    background-image: url("../images/board13.png");
+    height: 440px;
+    width: 440px;
+    background-size: cover;
+}
+
+.board-canvas-9 {
+    background-image: url("../images/board9.png");
+    height: 320px;
+    width: 320px;
+    background-size: cover;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.turn-options {
+    float: right;
+}
+
+.hidden {
+    display: none;
 }

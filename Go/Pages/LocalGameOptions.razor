@@ -1,24 +1,43 @@
 ﻿@page "/localgameoptions"
 @using Go.Shared.Forms.FormModels
+@inject NavigationManager Navman
 
-<h3>LocalGameOptions</h3>
+<br>
+<h1 style="text-align: center;"><b>Game Options</b></h1>
+<br>
 
-<button href="@($"localgame/{options.dimensions}")">
-    <NavLink class="nav-link" href="@($"localgame/{options.dimensions}")" Match="NavLinkMatch.All"> Start Game
-    </NavLink>
-</button>
+
 <EditForm Model="options">
-    <div class="form-group">
-        <label for="Dimensions">Board Dimensions: </label>
-        <InputSelect id="Dimensions" @bind-Value="options.dimensions">
+    <div class="form-group" style=" text-align: center;">
+        <label for="Dimensions" style="font-size: 18px;">Board Dimensions: </label>
+        <InputSelect id="Dimensions" style="font-size: 16px;" @bind-Value="options.dimensions">
             <option value="9">9x9</option>
-            <option value="12">12x12</option>
+            <option value="13">13x13</option>
             <option value="19">19x19</option>
         </InputSelect>
     </div>
 </EditForm>
-
+<br>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+<button class="btn-primary" @onclick=@Navigate>
+    Start Game
+</button>
+</div>
 
 @code {
     private static BoardOptions options = new();
+    private static NavigationManager NavMan2;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        // Injected components are only accessible in this method
+        // so we rob the bank by assigning from here.
+        NavMan2 = Navman;
+    }
+
+    private void Navigate()
+    {
+        NavMan2.NavigateTo("localgame/" + options.dimensions);
+    }
 }
