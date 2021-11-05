@@ -7,6 +7,7 @@
 @using Newtonsoft.Json.Linq
 @using Shared.Models
 @using System.Collections;
+@inject NavigationManager NavMan  
 @inject IJSRuntime jsRuntime
 
 <div class="turn-options inline">
@@ -32,6 +33,35 @@
             <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
         </div>
     }
+    
+    <div class="@(gameOverClass)">
+        <div class="modal fade show d-block" id="login" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="titleLabel">Game Over</h5>
+                        <button type="button" class="close" @onclick="Close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    @if (go.score[0] > go.score[1])
+                    {
+                        <div>Black Wins</div>
+                    }
+                    @if (go.score[0] < go.score[1])
+                    {
+                        <div>White Wins</div>;
+                    }
+                    @if (go.score[0] == go.score[1])
+                    {
+                        <div>Draw!</div>
+                    }
+                    <button type="button" @onclick="Reset">RESET</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div>
     <div class="inline">Black's Score: </div>
@@ -47,6 +77,7 @@
 @code {
     [Parameter]
     public String dimensions { get; set; }
+    public static NavigationManager NavMan2;
     int dim;
     ElementReference divCanvas;
     Blazor.Extensions.BECanvasComponent stones;
@@ -56,12 +87,15 @@
     String turn = "Black's Turn";
     ArrayList thisCaptured = new ArrayList();
     int passesInARow = 0;
+    bool gameOver = false;
+    string gameOverClass = "hidden";
 
     Board go = new Board(19);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         dim = Int32.Parse(dimensions);
+        NavMan2 = NavMan;
     }
 
     class Move
@@ -71,10 +105,23 @@
         public bool isWhite;
     }
 
+
+    private void Close()
+    {
+        gameOverClass= "hidden";
+    }
+
+    private void Reset()
+    {
+        NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);
+        Close();
+    }
+
     async void SkipTurn()
     {
         passesInARow++;
         whiteTurn = !whiteTurn;
+        go.skip();
         if (whiteTurn)
         {
             turn = "White's Turn";
@@ -87,6 +134,8 @@
         if (passesInARow >= 2)
         {
             go.setPlayable(false);
+            gameOver = true;
+            gameOverClass = "";
         }
     }
 
@@ -153,6 +202,10 @@
 
     async Task OnClick(MouseEventArgs eventArgs)
     {
+        if (gameOver)
+        {
+            return;
+        }
         double mouseX = 0;
         double mouseY = 0;
         if (divCanvas.Id?.Length > 0)

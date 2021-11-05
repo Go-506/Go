@@ -157,3 +157,7 @@ tr.red-row td {
 .turn-options {
     float: right;
 }
+
+.hidden {
+    display: none;
+}
