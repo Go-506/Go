@@ -12,10 +12,11 @@ namespace Go.Shared.Models
         private int[ , ] board;
         private bool playable = true;
         private bool blackToPlay = true;
-
+        public ArrayList capturedStones;
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
+            capturedStones = new ArrayList();
         }
 
         public int[ , ] getBoard()
@@ -75,7 +76,6 @@ namespace Go.Shared.Models
             //check if stone will be captured even after removing enemy stones it captures
             if (getLiberties(hypotheticalCapture, move).Count == 0)
             {
-                Console.WriteLine("2");
                 return false;
             }
 
@@ -83,6 +83,10 @@ namespace Go.Shared.Models
 
             //update main board if everything works
             board = hypotheticalCapture;
+
+            //update captured stones
+            capturedStones = captured;
+
             return true;
         }
 
