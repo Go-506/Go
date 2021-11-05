@@ -42,6 +42,11 @@ namespace Go.Shared.Models
             return blackToPlay;
         }
 
+        public void skip()
+        {
+            blackToPlay = !blackToPlay;
+        }
+
         /// <summary>
         /// Play a move and update the board if successful.
         /// </summary>
