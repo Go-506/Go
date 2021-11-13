@@ -89,18 +89,26 @@
     Canvas2DContext currentCanvasContext;
     List<Move> moves = new List<Move>();
     bool whiteTurn = false;
-    String turn = "Black's Turn";
     ArrayList thisCaptured = new ArrayList();
     int passesInARow = 0;
     bool gameOver = false;
     string gameOverClass = "hidden";
+    string turn = "Black's Turn";
+    bool isLoadingOnClick = false;
 
-    Board go = new Board(19);
+    Board go;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dim = Int32.Parse(dimensions);
+        go = new Board(dim);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         dim = Int32.Parse(dimensions);
         NavMan2 = NavMan;
+        currentCanvasContext = await stones.CreateCanvas2DAsync();
     }
 
     class Move
@@ -127,13 +135,10 @@
         passesInARow++;
         whiteTurn = !whiteTurn;
         go.skip();
-        if (whiteTurn)
-        {
-            turn = "White's Turn";
-        }
-        else
-        {
-            turn = "Black's Turn";
+        if (whiteTurn) {
+          turn = "White's Turn";
+        } else {
+          turn = "Black's Turn";
         }
 
         if (passesInARow >= 2)
@@ -184,12 +189,20 @@
 
     async Task DrawStone(Move move)
     {
-        if (move.isWhite) await currentCanvasContext.SetFillStyleAsync("White");
-        else await currentCanvasContext.SetFillStyleAsync("Black");
+        if (move.isWhite)
+        {
+            await currentCanvasContext.SetFillStyleAsync("White");
+
+        }
+        else
+        {
+            await currentCanvasContext.SetFillStyleAsync("Black");
+        }
         await currentCanvasContext.BeginPathAsync();
         await currentCanvasContext.ArcAsync(move.row * 30 + 40, move.col * 30 + 40, 10, 0, 2 * Math.PI);
         await currentCanvasContext.ClosePathAsync();
         await currentCanvasContext.FillAsync();
+
     }
 
     async Task RemoveStones()
@@ -207,10 +220,15 @@
 
     async Task OnClick(MouseEventArgs eventArgs)
     {
+        if (isLoadingOnClick)
+        {
+            return;
+        }
         if (gameOver)
         {
             return;
         }
+        isLoadingOnClick = true;
         double mouseX = 0;
         double mouseY = 0;
         if (divCanvas.Id?.Length > 0)
@@ -219,7 +237,6 @@
             JObject offsets = (JObject)JsonConvert.DeserializeObject(data);
             mouseX = eventArgs.ClientX - offsets.Value<double>("offsetLeft");
             mouseY = eventArgs.ClientY - offsets.Value<double>("offsetTop");
-            currentCanvasContext = await stones.CreateCanvas2DAsync();
 
             if (stones != null && currentCanvasContext != null)
             {
@@ -227,19 +244,16 @@
                 if (m != null && IsLegalMove(m))
                 {
                     whiteTurn = !whiteTurn;
-                    if (whiteTurn)
-                    {
-                        turn = "White's Turn";
-                    }
-                    else
-                    {
-                        turn = "Black's Turn";
+                    if (whiteTurn) {
+                      turn = "White's Turn";
+                    } else {
+                      turn = "Black's Turn";
                     }
                     await DrawStone(m);
                     await RemoveStones();
                 }
             }
-
         }
+        isLoadingOnClick = false;
     }
 }

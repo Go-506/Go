@@ -334,7 +334,7 @@ namespace Go.Shared.Models
             {
                 bound[0] = true;
             }
-            if (location[1] < board.GetLength(0)-1)
+            if (location[1] < board.GetLength(0) - 1)
             {
                 bound[1] = true;
             }
@@ -342,7 +342,7 @@ namespace Go.Shared.Models
             {
                 bound[2] = true;
             }
-            if (location[0] < board.GetLength(1)-1)
+            if (location[0] < board.GetLength(1) - 1)
             {
                 bound[3] = true;
             }
