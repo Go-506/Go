@@ -35,9 +35,19 @@
     <script>
         function getDivCanvasOffsets(el) {
             var obj = {};
-            obj.offsetLeft = el.offsetLeft;
-            obj.offsetTop = el.offsetTop;
+            obj.offsetLeft = el.offsetLeft - window.scrollX;
+            obj.offsetTop = el.offsetTop - window.scrollY;
             return JSON.stringify(obj);
+        }
+    </script>
+    <script>
+        function setTurnIsWhite(is) {
+            if (is) {
+                document.getElementById("turn-div").innerText = "White's Turn";
+            } else {
+                document.getElementById("turn-div").innerText = "Black's Turn";
+            }
+            return "";
         }
     </script>
 </body>
