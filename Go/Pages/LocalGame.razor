@@ -10,9 +10,21 @@
 @inject NavigationManager NavMan  
 @inject IJSRuntime jsRuntime
 
+
+<h2 style="padding-right: 150px; text-align: center;"><b>@turn</b></h2> 
+<div style="display: flex; padding-right: 150px; justify-content: center; align-items: center; height: auto;">
+    <button class="btn-primary" @onclick="SkipTurn" style="font-size: 16px; align-self: center;">Pass</button>
+</div>
+<br />
 <div class="turn-options inline">
-    <div class="inline" id="turn-div" style="width: 90px;">Black's Turn</div>
-    <button @onclick="SkipTurn" class="inline">Pass</button>
+    <div>
+        <div class="inline" style="font-size: 24px;"><b>Black's Score: </b></div>
+        <p class="inline" style="font-size: 24px;">@go.score[0]</p>
+    </div>
+    <div>
+        <p class="inline" style="font-size: 24px;"><b>White's Score: </b></p>
+        <p class="inline" style="font-size: 24px;">@go.score[1]</p>
+    </div>
 </div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     @if (dimensions.Equals("19"))
@@ -39,39 +51,32 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="titleLabel">Game Over</h5>
+                        <h5 class="modal-title" id="titleLabel">Game Finished</h5>
                         <button type="button" class="close" @onclick="Close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    @if (go.score[0] > go.score[1])
-                    {
-                        <div>Black Wins</div>
-                    }
-                    @if (go.score[0] < go.score[1])
-                    {
-                        <div>White Wins</div>;
-                    }
-                    @if (go.score[0] == go.score[1])
-                    {
-                        <div>Draw!</div>
-                    }
-                    <button type="button" @onclick="Reset">RESET</button>
-
+                    <div class="modal-body">
+                        @if (go.score[0] > go.score[1])
+                        {
+                            <div> Black Wins</div>
+                        }
+                        @if (go.score[0] < go.score[1])
+                        {
+                            <div> White Wins</div>;
+                        }
+                        @if (go.score[0] == go.score[1])
+                        {
+                            <div> Draw!</div>
+                        }
+                        <br />
+                        <button type="submit" class="btn btn-primary" @onclick="Reset">Reset Game</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div>
-    <div class="inline">Black's Score: </div>
-    <input class="inline" @bind="go.score[0]" />
-</div>
-<div>
-    <div class="inline">White's Score: </div>
-    <input class="inline" @bind="go.score[1]" />
-</div>
-<br>
 <br>
 
 @code {
@@ -88,6 +93,7 @@
     int passesInARow = 0;
     bool gameOver = false;
     string gameOverClass = "hidden";
+    string turn = "Black's Turn";
     bool isLoadingOnClick = false;
 
     Board go;
@@ -129,7 +135,11 @@
         passesInARow++;
         whiteTurn = !whiteTurn;
         go.skip();
-        await jsRuntime.InvokeAsync<string>("setTurnIsWhite", new object[] { whiteTurn });
+        if (whiteTurn) {
+          turn = "White's Turn";
+        } else {
+          turn = "Black's Turn";
+        }
 
         if (passesInARow >= 2)
         {
@@ -234,7 +244,11 @@
                 if (m != null && IsLegalMove(m))
                 {
                     whiteTurn = !whiteTurn;
-                    await jsRuntime.InvokeAsync<string>("setTurnIsWhite", new object[] { whiteTurn });
+                    if (whiteTurn) {
+                      turn = "White's Turn";
+                    } else {
+                      turn = "Black's Turn";
+                    }
                     await DrawStone(m);
                     await RemoveStones();
                 }
