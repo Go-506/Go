@@ -6,7 +6,16 @@ using System.Collections;
 
 namespace Go.Shared.Models
 {
-    public class Board
+
+    public interface IBoard
+    {
+        public int[,] getBoard();
+        public bool getPlayable();
+        public bool getBlackToPlay();
+        public ArrayList playMove(int[] move);
+        public ArrayList moveIsLegal(int[] move);
+    }
+    public class Board: IBoard
     {
         //1 means black stone; 0 means empty; -1 means white stone
         private int[ , ] board;
@@ -325,7 +334,7 @@ namespace Go.Shared.Models
             {
                 bound[0] = true;
             }
-            if (location[1] < board.GetLength(0)-1)
+            if (location[1] < board.GetLength(0) - 1)
             {
                 bound[1] = true;
             }
@@ -333,7 +342,7 @@ namespace Go.Shared.Models
             {
                 bound[2] = true;
             }
-            if (location[0] < board.GetLength(1)-1)
+            if (location[0] < board.GetLength(1) - 1)
             {
                 bound[3] = true;
             }
