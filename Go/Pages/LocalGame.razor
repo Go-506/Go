@@ -25,6 +25,7 @@
         <p class="inline" style="font-size: 24px;"><b>White's Score: </b></p>
         <p class="inline" style="font-size: 24px;">@go.score[1]</p>
     </div>
+    <div style="color: red">@illegal</div>
 </div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     @if (dimensions.Equals("19"))
@@ -94,6 +95,7 @@
     bool gameOver = false;
     string gameOverClass = "hidden";
     string turn = "Black's Turn";
+    string illegal = "";
     bool isLoadingOnClick = false;
 
     Board go;
@@ -177,10 +179,12 @@
 
         if (captured == null)
         {
+            illegal = "Illegal move - try again.";
             return false;
         }
         else
         {
+            illegal = "";
             thisCaptured = captured;
             passesInARow = 0;
             return true;
