@@ -1,0 +1,32 @@
+﻿@page "/analysisboard"
+@page "/analysisboard/{Id}"
+@using Blazor.Extensions
+@using Blazor.Extensions.Canvas
+@using Blazor.Extensions.Canvas.Canvas2D
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@using Shared.Models
+@using System.Collections;
+@using Shared.Models.MongoDB;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+
+<h3>Analysis for game id = @Id</h3>
+<br />
+
+<p>under construction</p>
+<br />
+
+
+@code {
+    [Parameter]
+    public String Id { get; set; }
+    Game game;
+
+    protected override async Task OnInitializedAsync()
+    {
+        game = GameDBInterface.GetGame(Id);
+
+    }
+
+}

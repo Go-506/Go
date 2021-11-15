@@ -29,6 +29,12 @@ namespace Go.Shared.Models.MongoDB
             return coll.Find(x => x.name.Equals(name)).FirstOrDefault();
         }
 
+        public static bool UpdateUser(IUser user)
+        {
+            Globals.USERS.DeleteOne(Builders<IUser>.Filter.Eq("name", user.name));
+            InsertUser(user);
+            return true;
+        }
 
     }
 }

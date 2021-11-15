@@ -10,8 +10,6 @@ namespace Go.Shared.Models
     public interface IBoard
     {
         public int[,] getBoard();
-        public bool getPlayable();
-        public bool getBlackToPlay();
         public ArrayList playMove(int[] move);
         public ArrayList moveIsLegal(int[] move);
     }
@@ -19,16 +17,13 @@ namespace Go.Shared.Models
     {
         //1 means black stone; 0 means empty; -1 means white stone
         private int[ , ] board;
-        private bool playable = true;
-        private bool blackToPlay = true;
         //[0]: black score, [1]: white score
         public int[] score;
-        private int passesInARow;
+
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
             score = new int[] { 0, 0 };
-            passesInARow = 0;
         }
 
         public int[ , ] getBoard()
@@ -36,25 +31,6 @@ namespace Go.Shared.Models
             return board;
         }
 
-        public bool getPlayable()
-        {
-            return playable;
-        }
-
-        public void setPlayable(Boolean play)
-        {
-            playable = play;
-        }
-
-        public bool getBlackToPlay()
-        {
-            return blackToPlay;
-        }
-
-        public void skip()
-        {
-            blackToPlay = !blackToPlay;
-        }
 
         /// <summary>
         /// Play a move and update the board if successful.
@@ -66,7 +42,6 @@ namespace Go.Shared.Models
             ArrayList captured = moveIsLegal(move);
             if (captured != null)
             {
-                blackToPlay = !blackToPlay;
                 int[] newScore = getScore(this.board);
                 this.score[0] = newScore[0];
                 this.score[1] = newScore[1];

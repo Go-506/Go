@@ -1,7 +1,41 @@
 ﻿@page "/gamehistory"
+@page "/gamehistory/{user}"
+@using Shared.Models
+@using Shared.Models.MongoDB;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <h2>Match History:</h2>
+<br />
+<table>
+    @foreach (Game game in GameDBInterface.GetGameList(UserDBInterface.GetUser(user)))
+    {
+        <tr>
+            <td>
+                @if (game.player2 == null)
+                {
+                    <a href="/analysisboard/@(game.Id)">@(game.Id) (Local Game)</a>
+                }
+                else
+                {
+                    <a href="/analysisboard/@(game.Id)">@(game.Id) (vs @(game.player2))</a>
+                }
+            </td>
+        </tr>
+    }
+</table>
 
 @code {
+    [Parameter]
+    public string user { get; set; }
 
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private void Navigate()
+    {
+
+    }
 }

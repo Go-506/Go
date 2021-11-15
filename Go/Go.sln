@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Go", "Go.csproj", "{A75B5A91-2A53-46E2-8A4A-4D70BC9500A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "..\Testing\Testing.csproj", "{2B71862F-06F4-483D-AE2E-6D772BAED806}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "..\Testing\Testing.csproj", "{2B71862F-06F4-483D-AE2E-6D772BAED806}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

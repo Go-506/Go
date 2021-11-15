@@ -5,6 +5,7 @@
 @using Go.Shared.Models
 @using Go.Shared.Models.MongoDB
 @using MongoDB.Driver
+@using MongoDB.Bson
 
 <a class="headtext" @onclick="Show" style="color:white"><span class="oi oi-person" style="color:white"></span> Signup</a>
 @if (show)
@@ -73,7 +74,7 @@
     }
     public async Task HandleValidSubmit()
     {
-        Player newUser = new Player(createAccountObj.Username, createAccountObj.Email, createAccountObj.Password);
+        Player newUser = new Player(createAccountObj.Username, createAccountObj.Email, createAccountObj.Password, new List<ObjectId>());
         newUser.hashPassword();
         UserDBInterface.InsertUser(newUser);
         await Globals.SetUser(localStorage, newUser);
