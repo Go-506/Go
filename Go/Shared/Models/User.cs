@@ -21,6 +21,7 @@ namespace Go.Shared.Models
         public string email { get; protected set; }
         public string type { get; protected set; }
         public string password { get; protected set; }
+        public List<ObjectId> gameHistory { get; protected set; }
     }
 
 
@@ -37,16 +38,23 @@ namespace Go.Shared.Models
 
     public class Player : IUser
     {
-        public Player(string name, string email, string password)
+        public Player(string name, string email, string password, List<ObjectId> gameHistory)
         {
             this.name = name;
             this.password = password;
             this.email = email;
+            this.gameHistory = gameHistory;
             this.type = "player";
         }
+
         public void hashPassword()
         {
             this.password = BCrypt.Net.BCrypt.HashPassword(password);
+        }
+        
+        public void addGame(Game game)
+        {
+            gameHistory.Add(game.Id);
         }
     }
 

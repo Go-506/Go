@@ -1,8 +1,28 @@
 ﻿@page "/account"
+@inject NavigationManager Navman
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using Shared.Models
 
 <h1 style="text-align: center;"><b>Account</b></h1>
 <br>
-<p>Under Construction</p>
+<button class="btn-primary" @onclick=@Navigate>
+    View Game History
+</button>
 @code {
+    private static NavigationManager NavMan2;
+    IUser user;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        // Injected components are only accessible in this method
+        // so we rob the bank by assigning from here.
+        NavMan2 = Navman;
+        user = await Globals.GetUser(localStorage);
+    }
+
+    private void Navigate()
+    {
+        NavMan2.NavigateTo("gamehistory/" + user.name);
+    }
 }
