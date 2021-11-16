@@ -91,5 +91,51 @@ namespace Go.Shared.Models
         {
             return board.score;
         }
+
+        // Tracks changes to the board
+        private class Delta
+        {
+            public List<int[]> deltas { get; }
+            public Delta(Board state1, Board state2)
+            {
+                int[,] b1 = state1.getBoard();
+                int[,] b2 = state2.getBoard();
+                if (b1.GetLength(0) != b2.GetLength(0) ||
+                    b1.GetLength(1) != b2.GetLength(1))
+                {
+                    throw new ArgumentException("Board dimensions don't match.");
+                }
+
+                int X = b1.GetLength(0);
+                int Y = b1.GetLength(1);
+
+                for (int i = 0; i < X; i++)
+                {
+                    for (int j = 0; j < Y; j++)
+                    {
+                        if (b1[i, j] != b2[i, j])
+                        {
+                            deltas.Add(new int[3] { i, j, b2[i, j] - b1[i, j] });
+                        }
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Applies or reverts the move
+            /// </summary>
+            /// <param name="init">The initial board state</param>
+            /// <param name="direction">The direction; 1 to apply or -1 to revert. OPTIONAL, defaults to 1.</param>
+            /// <returns>New board with move applied/reverted</returns>
+            public Board Apply(Board init, int direction = 1)
+            {
+                int[,] newBoard = init.getBoard();
+                foreach (int[] delta in deltas)
+                {
+                    newBoard[delta[0], delta[1]] += delta[2] * direction;
+                }
+                return new Board(newBoard);
+            }
+        }
     }
 }
