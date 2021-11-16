@@ -29,7 +29,7 @@ namespace Go.Shared.Models
         public Board(int[,] state)
         {
             board = (int[,]) state.Clone();
-            score = new int[] { 0, 0 };
+            score = getScore(board);
         }
 
         public int[ , ] getBoard()

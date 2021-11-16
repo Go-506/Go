@@ -27,6 +27,7 @@ namespace Go.Shared.Models
         [BsonId]
         public ObjectId Id { get; set; }
         public List<int[]> moveList { get; protected set; }
+        public List<Delta> deltas { get; protected set; }
         public Board board { get; protected set; }
         public string player1 { get; protected set; }
         public string player2 { get; protected set; }
@@ -45,6 +46,7 @@ namespace Go.Shared.Models
 
         public ArrayList playMove(int row, int col)
         {
+            Board oldBoard = new Board(board.getBoard());
             int[] move = new int[2] { row, col };
             //moveList.Append(move);
             int color = 0;
@@ -60,6 +62,7 @@ namespace Go.Shared.Models
             {
                 passesInARow = 0;
                 moveList.Add(move);
+                deltas.Add(new Delta(oldBoard, board));
                 if (state == status.BlacksTurn)
                     state = status.WhitesTurn;
                 else if (state == status.WhitesTurn)
@@ -93,7 +96,7 @@ namespace Go.Shared.Models
         }
 
         // Tracks changes to the board
-        private class Delta
+        public class Delta
         {
             public List<int[]> deltas { get; }
             public Delta(Board state1, Board state2)
