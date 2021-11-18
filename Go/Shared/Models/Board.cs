@@ -32,6 +32,7 @@ namespace Go.Shared.Models
         public Board(int[,] state)
         {
             board = (int[,]) state.Clone();
+            captured = new int[] { 0, 0 };
             score = getScore(board);
         }
 
@@ -48,16 +49,16 @@ namespace Go.Shared.Models
         /// <returns>Move successful</returns>
         public ArrayList playMove(int[] move)
         {
-            ArrayList captured = moveIsLegal(move);
-            if (captured != null)
+            ArrayList capture = moveIsLegal(move);
+            if (capture != null)
             {
-                if (move[2] == 1) this.captured[0] += captured.Count;
-                else this.captured[1] += captured.Count;
+                if (move[2] == 1) this.captured[0] += capture.Count;
+                else this.captured[1] += capture.Count;
                 int[] newScore = getScore(this.board);
                 this.score[0] = newScore[0];
                 this.score[1] = newScore[1];
             }
-            return captured;
+            return capture;
         }
 
         /// <summary>
