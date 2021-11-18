@@ -49,7 +49,8 @@
         </div>
     }
 
-    @if (gameOver) {
+    @if (gameOver)
+    {
         <div class="modal fade show d-block" id="login" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -99,30 +100,26 @@
     int blackScore = 0;
     Game game;
 
-    protected override async Task OnInitializedAsync()
-    {
-        dim = Int32.Parse(dimensions);
-        //IUser user = await Globals.GetUser(localStorage);
-        //if (user != null)
-        //    game = new Game(dim, (await Globals.GetUser(localStorage)).name, null);
-        //else
-        IUser user = await Globals.GetUser(localStorage);
-        string username = user is null ? "GUEST" : user.name;
-        game = new Game(dim, username, null);
-        user = await Globals.GetUser(localStorage);
-        GameDBInterface.InsertGame(game);
-        if (user is Player)
-        {
-            ((Player)user).addGame(game);
-            UserDBInterface.UpdateUser(user);
-        }
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        dim = Int32.Parse(dimensions);
-        NavMan2 = NavMan;
-        currentCanvasContext = await stones.CreateCanvas2DAsync();
+        if (firstRender)
+        {
+            dim = Int32.Parse(dimensions);
+            NavMan2 = NavMan;
+            currentCanvasContext = await stones.CreateCanvas2DAsync();
+
+            IUser user = await Globals.GetUser(localStorage);
+            string username = user is null ? "GUEST" : user.name;
+            game = new Game(dim, username, null);
+            user = await Globals.GetUser(localStorage);
+            GameDBInterface.InsertGame(game);
+            if (user is Player)
+            {
+                ((Player)user).addGame(game);
+                UserDBInterface.UpdateUser(user);
+            }
+            StateHasChanged();
+        }
 
 
     }

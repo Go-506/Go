@@ -49,16 +49,16 @@ namespace Go.Shared.Models
         /// <returns>Move successful</returns>
         public ArrayList playMove(int[] move)
         {
-            ArrayList capture = moveIsLegal(move);
-            if (capture != null)
+            ArrayList capturedPieces = moveIsLegal(move);
+            if (capturedPieces != null)
             {
-                if (move[2] == 1) this.captured[0] += capture.Count;
-                else this.captured[1] += capture.Count;
+                if (move[2] == 1) this.captured[0] += capturedPieces.Count;
+                else this.captured[1] += capturedPieces.Count;
                 int[] newScore = getScore(this.board);
                 this.score[0] = newScore[0];
                 this.score[1] = newScore[1];
             }
-            return capture;
+            return capturedPieces;
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace Go.Shared.Models
 
             //consider stones this move will capture (but don't update the main board)
             int[,] hypotheticalCapture = (int[,])board.Clone();
-            ArrayList captured = checkCapture(hypotheticalCapture, move);
-            removeStones(hypotheticalCapture, captured);
+            ArrayList capturedPieces = checkCapture(hypotheticalCapture, move);
+            removeStones(hypotheticalCapture, capturedPieces);
 
             //check if stone will be captured even after removing enemy stones it captures
             if (getLiberties(hypotheticalCapture, move).Count == 0)
@@ -93,7 +93,7 @@ namespace Go.Shared.Models
 
             //update main board if everything works
             board = hypotheticalCapture;
-            return captured;
+            return capturedPieces;
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace Go.Shared.Models
         /// <returns></returns>
         private ArrayList checkCapture(int[ , ] board, int[] moveJustPlayed)
         {
-            ArrayList captured = new ArrayList();
+            ArrayList capturedPieces = new ArrayList();
             int x = moveJustPlayed[0];
             int y = moveJustPlayed[1];
             int color = moveJustPlayed[2];
@@ -256,8 +256,8 @@ namespace Go.Shared.Models
                 int[] up = new int[] { x, y - 1 };
                 if (getLiberties(board, up).Count == 0)
                 {
-                    if (!contains(captured, up))
-                    captured.AddRange(getConnected(up, board));
+                    if (!contains(capturedPieces, up))
+                    capturedPieces.AddRange(getConnected(up, board));
                 }
             }
 
@@ -266,8 +266,8 @@ namespace Go.Shared.Models
                 int[] down = new int[] { x, y + 1 };
                 if (getLiberties(board, down).Count == 0)
                 {
-                    if (!contains(captured, down))
-                        captured.AddRange(getConnected(down, board));
+                    if (!contains(capturedPieces, down))
+                        capturedPieces.AddRange(getConnected(down, board));
                 }
             }
 
@@ -276,8 +276,8 @@ namespace Go.Shared.Models
                 int[] left = new int[] { x - 1, y };
                 if (getLiberties(board, left).Count == 0)
                 {
-                    if (!contains(captured, left))
-                        captured.AddRange(getConnected(left, board));
+                    if (!contains(capturedPieces, left))
+                        capturedPieces.AddRange(getConnected(left, board));
                 }
             }
 
@@ -286,12 +286,12 @@ namespace Go.Shared.Models
                 int[] right = new int[] { x + 1, y };
                 if (getLiberties(board, right).Count == 0)
                 {
-                    if (!contains(captured, right))
-                        captured.AddRange(getConnected(right, board));
+                    if (!contains(capturedPieces, right))
+                        capturedPieces.AddRange(getConnected(right, board));
                 }
             }
 
-            return captured;
+            return capturedPieces;
         }
 
         /// <summary>

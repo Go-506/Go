@@ -14,12 +14,13 @@
 
 
 @if (game.player2 is null)
-            {
-                <h3>Analysis for local game:</h3>
-            } else
-            {
-                <h3>Analysis for @(game.player1) vs @game.player2):</h3>
-            }
+{
+    <h3>Analysis for local game:</h3>
+}
+else
+{
+    <h3>Analysis for @(game.player1) vs @game.player2):</h3>
+}
 <br />
 <div class="turn-options inline">
     <div>
@@ -33,33 +34,33 @@
 </div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     <div>
-    @if (dimensions == 19)
-    {
-        <div @ref="divCanvas" class="board-canvas-19">
-            <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
-        </div>
-    }
-    @if (dimensions == 13)
-    {
-        <div @ref="divCanvas" class="board-canvas-13">
-            <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
-        </div>
-    }
-    @if (dimensions == 9)
-    {
-        <div @ref="divCanvas" class="board-canvas-9">
-            <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
-        </div>
-    }
+        @if (dimensions == 19)
+        {
+            <div @ref="divCanvas" class="board-canvas-19">
+                <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+            </div>
+        }
+        @if (dimensions == 13)
+        {
+            <div @ref="divCanvas" class="board-canvas-13">
+                <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
+            </div>
+        }
+        @if (dimensions == 9)
+        {
+            <div @ref="divCanvas" class="board-canvas-9">
+                <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+            </div>
+        }
     </div>
-    <div style="width: 20px"/>
+    <div style="width: 20px" />
     <div>
         <table>
             <tr>
                 <th>Black</th>
                 <th>White</th>
             </tr>
-            @for(int i = 0; i < moves.Count; i += 2)
+            @for (int i = 0; i < moves.Count; i += 2)
             {
                 <tr>
                     <td style="@(i + 1== game.thisMove ? "font-weight:bold" : "")">@(moves[i])</td>
@@ -100,7 +101,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        currentCanvasContext = await stones.CreateCanvas2DAsync();
+        if (firstRender)
+        {
+            currentCanvasContext = await stones.CreateCanvas2DAsync();
+
+            StateHasChanged();
+        }
     }
 
     private async Task Back()
@@ -127,7 +133,8 @@
                     if (color == 1)
                     {
                         await currentCanvasContext.SetFillStyleAsync("Black");
-                    } else if (color == -1)
+                    }
+                    else if (color == -1)
                     {
                         await currentCanvasContext.SetFillStyleAsync("White");
                     }
