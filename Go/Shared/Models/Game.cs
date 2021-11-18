@@ -111,22 +111,48 @@ namespace Go.Shared.Models
             return board.score;
         }
 
-        public void StepForward()
+        public void SetMove(int move)
         {
-            if (thisMove < totalMoves - 1)
+            if (thisMove == move)
             {
-                board = deltas[thisMove].Apply(board, 1);
-                thisMove++;
+                return;
+            }
+            else if (thisMove < move)
+            {
+                do
+                {
+                    StepForward();
+                } while (thisMove < move);
+            }
+            else
+            {
+                do
+                {
+                    StepBack();
+                } while (thisMove > move);
             }
         }
 
-        public void StepBack()
+        public bool StepForward()
+        {
+            if (thisMove < totalMoves - 2)
+            {
+                board = deltas[thisMove].Apply(board, 1);
+                thisMove++;
+                return true;
+            }
+            return false;
+        }
+
+        public bool StepBack()
         {
             if (thisMove > 0)
             {
                 board = deltas[thisMove - 1].Apply(board, -1);
                 thisMove--;
+                return true;
             }
+            return false;
         }
 
         // Tracks changes to the board
