@@ -19,11 +19,14 @@ namespace Go.Shared.Models
         private int[ , ] board;
         //[0]: black score, [1]: white score
         public int[] score;
+        // [0]: white pieces captured (by black), [1]: black pieces captured (by white)
+        public int[] captured;
 
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
             score = new int[] { 0, 0 };
+            captured = new int[] { 0, 0 };
         }
 
         public int[ , ] getBoard()
@@ -42,6 +45,8 @@ namespace Go.Shared.Models
             ArrayList captured = moveIsLegal(move);
             if (captured != null)
             {
+                if (move[2] == 1) this.captured[0] += captured.Count;
+                else this.captured[1] += captured.Count;
                 int[] newScore = getScore(this.board);
                 this.score[0] = newScore[0];
                 this.score[1] = newScore[1];
@@ -413,28 +418,216 @@ namespace Go.Shared.Models
         }
 
         /// <summary>
+        /// small helper function for getscore method
+        /// </summary>
+        /// <param name="bounds></param>
+        /// <returns>True if all 4 bounds in the param array are true, else false</returns>
+        public bool allBoundsReached(bool[] bounds)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (bounds[i] == false)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Return the score for the given board. The score for each player
         /// is simply the number of stones they have on the board.
         /// </summary>
         /// <param name="board"></param>
+        /// 
         public int[] getScore(int[,] board)
         {
             int[] boardScore = new int[] { 0, 0 };
-            for (int r = 0; r < board.GetLength(0); r++)
-            {
-                for (int c = 0; c < board.GetLength(1); c++)
-                {
-                    if (board[r,c] == 1)
-                    {
-                        boardScore[0] += 1;
-                    }
+            int sectionSize = 0;
+            int sectionColorTouched = 0;
+            bool sectionControlled;
+            // array for tracking if { top, left, bottom, right } bounds adj to section
+            bool[] boundsReached = new bool[] { false, false, false, false };
+            int[] current = new int[] { 0, 0, 0 };
 
-                    if (board[r,c] == -1)
-                    {
-                        boardScore[1] += 1;
-                    }
+            // makes a bool 2d array representative of whether each space on board has been visited
+            bool[,] visited = new bool[board.GetLength(0), board.GetLength(1)];
+            for (int x = 0; x < board.GetLength(0); x++)
+            {
+                for (int y = 0; y < board.GetLength(0); y++)
+                {
+                    visited[x, y] = false;
                 }
             }
+
+            // make queues for each section of a certain color (or empty)
+            // as well as for the neighbors within that section of the same color
+            Queue<int[]> neighbors = new Queue<int[]>();
+            Queue<int[]> sections = new Queue<int[]>();
+            bool neighborsEmpty = false;
+            bool sectionsEmpty = false;
+            sections.Enqueue(new int[] { 0, 0, board[0, 0] });
+
+            do {
+                sectionsEmpty = false;
+                do
+                {
+                    if (sections.Count == 0)
+                    {
+                        sectionsEmpty = true;
+                    }
+                    else
+                    {
+                        current = sections.Dequeue();
+                        
+                    }
+                } while (!sectionsEmpty && visited[current[0], current[1]]);
+                if (!sectionsEmpty)
+                {
+                    sectionControlled = true;
+                    sectionColorTouched = 0;
+                    sectionSize = 0;
+                    boundsReached = new bool[] { false, false, false, false };
+                    do
+                    {
+                        neighborsEmpty = false;
+                        if (sectionSize > 0)
+                        {
+                            do
+                            {
+                                if (neighbors.Count == 0)
+                                {
+                                    neighborsEmpty = true;
+                                }
+                                else
+                                {
+                                    current = neighbors.Dequeue();
+                                }
+                            } while (!neighborsEmpty && visited[current[0], current[1]]);
+                        }
+                        if (!neighborsEmpty)
+                        {
+                            sectionSize++;
+                            visited[current[0], current[1]] = true;
+                            // checks the space above current
+                            if (current[1] == 0)
+                            {
+                                boundsReached[0] = true;
+                            }
+                            else if (!visited[current[0], current[1] - 1] && board[current[0], current[1] - 1] == current[2])
+                            {
+                                neighbors.Enqueue(new int[] { current[0], current[1] - 1, current[2] });
+                            }
+                            else if (!visited[current[0], current[1] - 1] && board[current[0], current[1] - 1] != current[2])
+                            {
+                                sections.Enqueue(new int[] { current[0], current[1] - 1, board[current[0], current[1] - 1] });
+                            }
+                            if (current[2] == 0 && current[1] != 0 && board[current[0], current[1] - 1] != 0)
+                            {
+                                if (sectionColorTouched == 0)
+                                {
+                                    sectionColorTouched = board[current[0], current[1] - 1];
+                                }
+                                else if (sectionColorTouched != board[current[0], current[1] - 1])
+                                {
+                                    sectionControlled = false;
+                                }
+                            }
+                            // checks the space left of current
+                            if (current[0] == 0)
+                            {
+                                boundsReached[1] = true;
+                            }
+                            else if (!visited[current[0] - 1, current[1]] && board[current[0] - 1, current[1]] == current[2])
+                            {
+                                neighbors.Enqueue(new int[] { current[0] - 1, current[1], current[2] });
+                            }
+                            else if (!visited[current[0] - 1, current[1]] && board[current[0] - 1, current[1]] != current[2])
+                            {
+                                sections.Enqueue(new int[] { current[0] - 1, current[1], board[current[0] - 1, current[1]] });
+                            }
+                            if (current[2] == 0 && current[0] != 0 && board[current[0] - 1, current[1]] != 0)
+                            {
+                                if (sectionColorTouched == 0)
+                                {
+                                    sectionColorTouched = board[current[0] - 1, current[1]];
+                                }
+                                else if (sectionColorTouched != board[current[0] - 1, current[1]])
+                                {
+                                    sectionControlled = false;
+                                }
+                            }
+                            // checks the space beneath current
+                            if (current[1] == board.GetLength(0) - 1)
+                            {
+                                boundsReached[2] = true;
+                            }
+                            else if (!visited[current[0], current[1] + 1] && board[current[0], current[1] + 1] == current[2])
+                            {
+                                neighbors.Enqueue(new int[] { current[0], current[1] + 1, current[2] });
+                            }
+                            else if (!visited[current[0], current[1] + 1] && board[current[0], current[1] + 1] != current[2])
+                            {
+                                sections.Enqueue(new int[] { current[0], current[1] + 1, board[current[0], current[1] + 1] });
+                            }
+                            if (current[2] == 0 && current[1] != board.GetLength(0) - 1 && board[current[0], current[1] + 1] != 0)
+                            {
+                                if (sectionColorTouched == 0)
+                                {
+                                    sectionColorTouched = board[current[0], current[1] + 1];
+                                }
+                                else if (sectionColorTouched != board[current[0], current[1] + 1])
+                                {
+                                    sectionControlled = false;
+                                }
+                            }
+                            // checks the space right of current
+                            if (current[0] == board.GetLength(1) - 1)
+                            {
+                                boundsReached[3] = true;
+                            }
+                            else if (!visited[current[0] + 1, current[1]] && board[current[0] + 1, current[1]] == current[2])
+                            {
+                                neighbors.Enqueue(new int[] { current[0] + 1, current[1], current[2] });
+                            }
+                            else if (!visited[current[0] + 1, current[1]] && board[current[0] + 1, current[1]] != current[2])
+                            {
+                                sections.Enqueue(new int[] { current[0] + 1, current[1], board[current[0] + 1, current[1]] });
+                            }
+                            if (current[2] == 0 && current[0] != board.GetLength(1) - 1 && board[current[0] + 1, current[1]] != 0)
+                            {
+                                if (sectionColorTouched == 0)
+                                {
+                                    sectionColorTouched = board[current[0] + 1, current[1]];
+                                }
+                                else if (sectionColorTouched != board[current[0] + 1, current[1]])
+                                {
+                                    sectionControlled = false;
+                                }
+                            }
+                        }
+                    } while (neighbors.Count != 0) ;
+                    // update the score based on the previous segment checked
+                    if (current[2] == 1)
+                    {
+                        boardScore[0] += sectionSize;
+                    }
+                    else if (current[2] == -1)
+                    {
+                        boardScore[1] += sectionSize;
+                    }
+                    else if (sectionControlled && sectionColorTouched == 1 && !allBoundsReached(boundsReached))
+                    {
+                        boardScore[0] += sectionSize;
+                    }
+                    else if (sectionControlled && sectionColorTouched == -1 && !allBoundsReached(boundsReached))
+                    {
+                        boardScore[1] += sectionSize;
+                    }
+                }
+            } while (sections.Count != 0);
+            boardScore[0] += captured[0];
+            boardScore[1] += captured[1];
             return boardScore;
         }
     }
