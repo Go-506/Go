@@ -83,8 +83,8 @@
 <br>
 
 @code {
-        [Parameter]
-        public String dimensions { get; set; }
+    [Parameter]
+    public String dimensions { get; set; }
     public static NavigationManager NavMan2;
     int dim;
     ElementReference divCanvas;
@@ -106,7 +106,9 @@
         //if (user != null)
         //    game = new Game(dim, (await Globals.GetUser(localStorage)).name, null);
         //else
-        game = new Game(dim, "GUEST", null);
+        IUser user = await Globals.GetUser(localStorage);
+        string username = user is null ? "GUEST" : user.name;
+        game = new Game(dim, username, null);
         user = await Globals.GetUser(localStorage);
         GameDBInterface.InsertGame(game);
         if (user is Player)

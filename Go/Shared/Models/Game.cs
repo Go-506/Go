@@ -7,6 +7,8 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Collections;
 
+using Go.Shared.Models.MongoDB;
+
 namespace Go.Shared.Models
 {
     class IllegalMoveException : Exception {
@@ -37,6 +39,7 @@ namespace Go.Shared.Models
         public Game(int size, string player1, string player2)
         {
             moveList = new List<int[]>();
+            deltas = new List<Delta>();
             this.player1 = player1;
             this.player2 = player2;
             this.state = status.BlacksTurn;
@@ -55,8 +58,8 @@ namespace Go.Shared.Models
             else
                 color = -1;
            
-            ArrayList capturedPeices = board.playMove(new int[3] { row, col, color });
-            if (capturedPeices == null)
+            ArrayList capturedPieces = board.playMove(new int[3] { row, col, color });
+            if (capturedPieces == null)
                 throw new IllegalMoveException();
             else
             {
@@ -68,7 +71,7 @@ namespace Go.Shared.Models
                 else if (state == status.WhitesTurn)
                     state = status.BlacksTurn;
             }
-            return capturedPeices;
+            return capturedPieces;
         }
 
         public void passTurn()
@@ -103,6 +106,7 @@ namespace Go.Shared.Models
             {
                 int[,] b1 = state1.getBoard();
                 int[,] b2 = state2.getBoard();
+                deltas = new List<int[]>();
                 if (b1.GetLength(0) != b2.GetLength(0) ||
                     b1.GetLength(1) != b2.GetLength(1))
                 {
