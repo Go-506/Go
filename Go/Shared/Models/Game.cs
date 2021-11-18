@@ -31,6 +31,9 @@ namespace Go.Shared.Models
         public List<int[]> moveList { get; protected set; }
         public List<Delta> deltas { get; protected set; }
         public Board board { get; protected set; }
+        public int size { get; protected set; }
+        public int thisMove { get; protected set; }
+        public int totalMoves { get; protected set; }
         public string player1 { get; protected set; }
         public string player2 { get; protected set; }
         public status state { get; protected set; }
@@ -44,6 +47,9 @@ namespace Go.Shared.Models
             this.player2 = player2;
             this.state = status.BlacksTurn;
             this.passesInARow = 0;
+            this.size = size;
+            this.thisMove = 0;
+            this.totalMoves = 0;
             board = new Board(size);
         }
 
@@ -57,7 +63,7 @@ namespace Go.Shared.Models
                 color = 1;
             else
                 color = -1;
-           
+
             ArrayList capturedPieces = board.playMove(new int[3] { row, col, color });
             if (capturedPieces == null)
                 throw new IllegalMoveException();
@@ -71,6 +77,8 @@ namespace Go.Shared.Models
                 else if (state == status.WhitesTurn)
                     state = status.BlacksTurn;
             }
+            this.thisMove++;
+            this.totalMoves++;
             return capturedPieces;
         }
 
@@ -91,6 +99,8 @@ namespace Go.Shared.Models
                 else
                     this.state = status.Draw;
             }
+            thisMove++;
+            totalMoves++;
         }
 
         public int[] getScore()
@@ -98,10 +108,28 @@ namespace Go.Shared.Models
             return board.score;
         }
 
+        public void StepForward()
+        {
+            if (thisMove < totalMoves)
+            {
+                board = deltas[thisMove].Apply(board, 1);
+                thisMove++;
+            }
+        }
+
+        public void StepBack()
+        {
+            if (thisMove > 0)
+            {
+                board = deltas[thisMove - 1].Apply(board, -1);
+                thisMove--;
+            }
+        }
+
         // Tracks changes to the board
         public class Delta
         {
-            public List<int[]> deltas { get; }
+            public List<int[]> deltas { get; private set; }
             public Delta(Board state1, Board state2)
             {
                 int[,] b1 = state1.getBoard();
@@ -143,6 +171,12 @@ namespace Go.Shared.Models
                 }
                 return new Board(newBoard);
             }
+        }
+
+        public void ResetToStart()
+        {
+            this.thisMove = 0;
+            this.board = new Board(size);
         }
     }
 }

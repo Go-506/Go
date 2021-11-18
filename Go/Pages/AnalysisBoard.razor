@@ -9,12 +9,37 @@
 @using System.Collections;
 @using Shared.Models.MongoDB;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
+
 
 
 <h3>Analysis for game id = @Id</h3>
+@testString
 <br />
-
-<p>under construction</p>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    @if (dimensions == 19)
+    {
+        <div @ref="divCanvas" class="board-canvas-19">
+            <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+        </div>
+    }
+    @if (dimensions == 13)
+    {
+        <div @ref="divCanvas" class="board-canvas-13">
+            <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
+        </div>
+    }
+    @if (dimensions == 9)
+    {
+        <div @ref="divCanvas" class="board-canvas-9">
+            <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+        </div>
+    }
+</div>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    <button type="button" @onclick="Back">&lt;</button>&nbsp;
+    <button type="button" @onclick="Forward">&gt;</button>
+</div>
 <br />
 
 
@@ -22,11 +47,64 @@
     [Parameter]
     public String Id { get; set; }
     Game game;
+    int dimensions;
+
+    ElementReference divCanvas;
+    Blazor.Extensions.BECanvasComponent stones;
+    Canvas2DContext currentCanvasContext;
 
     protected override async Task OnInitializedAsync()
     {
         game = GameDBInterface.GetGame(Id);
-
+        game.ResetToStart();
+        dimensions = game.size;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        currentCanvasContext = await stones.CreateCanvas2DAsync();
+    }
+
+    private async Task Back()
+    {
+        game.StepBack();
+        await Refresh();
+    }
+
+    private async Task Forward()
+    {
+        game.StepForward();
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        for (int i = 0; i < dimensions; i++)
+        {
+            for (int j = 0; j < dimensions; j++)
+            {
+                int color = game.board.getBoard()[i, j];
+                if (color != 0)
+                {
+                    if (color == 1)
+                    {
+                        await currentCanvasContext.SetFillStyleAsync("Black");
+                    } else if (color == -1)
+                    {
+                        await currentCanvasContext.SetFillStyleAsync("White");
+                    }
+                    await currentCanvasContext.BeginPathAsync();
+                    await currentCanvasContext.ArcAsync(i * 30 + 40, j * 30 + 40, 10, 0, 2 * Math.PI);
+                    await currentCanvasContext.ClosePathAsync();
+                    await currentCanvasContext.FillAsync();
+                }
+                else
+                {
+                    int x = (i * 30) + 30;
+                    int y = (j * 30) + 30;
+                    await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
+                }
+            }
+        }
+    }
 }
