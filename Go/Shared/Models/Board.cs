@@ -29,9 +29,15 @@ namespace Go.Shared.Models
             captured = new int[] { 0, 0 };
         }
 
+        public Board(int[,] state)
+        {
+            board = (int[,]) state.Clone();
+            score = getScore(board);
+        }
+
         public int[ , ] getBoard()
         {
-            return board;
+            return (int[,]) board.Clone();
         }
 
 

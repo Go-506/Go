@@ -9,24 +9,160 @@
 @using System.Collections;
 @using Shared.Models.MongoDB;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
 
 
-<h3>Analysis for game id = @Id</h3>
+
+@if (game.player2 is null)
+            {
+                <h3>Analysis for local game:</h3>
+            } else
+            {
+                <h3>Analysis for @(game.player1) vs @game.player2):</h3>
+            }
 <br />
-
-<p>under construction</p>
+<div class="turn-options inline">
+    <div>
+        <div class="inline" style="font-size: 24px;"><b>Black's Score: </b></div>
+        <p class="inline" style="font-size: 24px;">@(game.getScore()[0])</p>
+    </div>
+    <div>
+        <p class="inline" style="font-size: 24px;"><b>White's Score: </b></p>
+        <p class="inline" style="font-size: 24px;">@(game.getScore()[1])</p>
+    </div>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    <div>
+    @if (dimensions == 19)
+    {
+        <div @ref="divCanvas" class="board-canvas-19">
+            <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+        </div>
+    }
+    @if (dimensions == 13)
+    {
+        <div @ref="divCanvas" class="board-canvas-13">
+            <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
+        </div>
+    }
+    @if (dimensions == 9)
+    {
+        <div @ref="divCanvas" class="board-canvas-9">
+            <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+        </div>
+    }
+    </div>
+    <div style="width: 20px"/>
+    <div>
+        <table>
+            <tr>
+                <th>Black</th>
+                <th>White</th>
+            </tr>
+            @for(int i = 0; i < moves.Count; i += 2)
+            {
+                <tr>
+                    <td style="@(i + 1== game.thisMove ? "font-weight:bold" : "")">@(moves[i])</td>
+                    @if (i + 1 < moves.Count)
+                    {
+                        <td style="@(i + 2 == game.thisMove ? "font-weight:bold" : "")">@(moves[i + 1])</td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    <button type="button" @onclick="Back">&lt;</button>&nbsp;
+    <button type="button" @onclick="Forward">&gt;</button>
+</div>
 <br />
 
 
 @code {
     [Parameter]
     public String Id { get; set; }
-    Game game;
+    private Game game;
+    private List<string> moves;
+    private int dimensions;
+
+    ElementReference divCanvas;
+    Blazor.Extensions.BECanvasComponent stones;
+    Canvas2DContext currentCanvasContext;
 
     protected override async Task OnInitializedAsync()
     {
         game = GameDBInterface.GetGame(Id);
-
+        game.ResetToStart();
+        dimensions = game.size;
+        moves = GenMoves();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        currentCanvasContext = await stones.CreateCanvas2DAsync();
+    }
+
+    private async Task Back()
+    {
+        game.StepBack();
+        await Refresh();
+    }
+
+    private async Task Forward()
+    {
+        game.StepForward();
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        for (int i = 0; i < dimensions; i++)
+        {
+            for (int j = 0; j < dimensions; j++)
+            {
+                int color = game.board.getBoard()[i, j];
+                if (color != 0)
+                {
+                    if (color == 1)
+                    {
+                        await currentCanvasContext.SetFillStyleAsync("Black");
+                    } else if (color == -1)
+                    {
+                        await currentCanvasContext.SetFillStyleAsync("White");
+                    }
+                    await currentCanvasContext.BeginPathAsync();
+                    await currentCanvasContext.ArcAsync(i * 30 + 40, j * 30 + 40, 10, 0, 2 * Math.PI);
+                    await currentCanvasContext.ClosePathAsync();
+                    await currentCanvasContext.FillAsync();
+                }
+                else
+                {
+                    int x = (i * 30) + 30;
+                    int y = (j * 30) + 30;
+                    await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
+                }
+            }
+        }
+    }
+
+    private List<String> GenMoves()
+    {
+        int color = 1;
+        int currMove = 1;
+        List<string> moves = new List<string>();
+        foreach (int[] move in game.moveList)
+        {
+            if (move[2] != color)
+            {
+                moves.Add(currMove.ToString() + ". Pass");
+                currMove++;
+                color *= -1;
+            }
+            moves.Add(currMove.ToString() + ". " + (char)(move[0] + 65) + (19 - move[1]).ToString());
+            currMove++;
+            color *= -1;
+        }
+        return moves;
+    }
 }
