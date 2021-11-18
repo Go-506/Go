@@ -15,11 +15,11 @@
                     <td>
                         @if (game.player2 == null)
                         {
-                            <a href="/analysisboard/@(game.Id)">@(game.Id) (Local Game)</a>
+                            <a href="/analysisboard/@(game.Id)">Local Game on @(game.date) (@(game.Result()))</a>
                         }
                         else
                         {
-                            <a href="/analysisboard/@(game.Id)">@(game.Id) (vs @(game.player2))</a>
+                            <a href="/analysisboard/@(game.Id)">Online vs @(game.player2) on @(game.date) (@(game.Result()))</a>
                         }
                     </td>
                 </tr>

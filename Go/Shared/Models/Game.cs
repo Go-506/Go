@@ -38,6 +38,7 @@ namespace Go.Shared.Models
         public string player2 { get; protected set; }
         public status state { get; protected set; }
         public int passesInARow { get; protected set; }
+        public string date { get; protected set; }
 
         public Game(int size, string player1, string player2)
         {
@@ -51,6 +52,7 @@ namespace Go.Shared.Models
             this.thisMove = 0;
             this.totalMoves = 0;
             board = new Board(size);
+            this.date = DateTime.Now.Date.ToString("d");
         }
 
         public ArrayList playMove(int row, int col)
@@ -70,7 +72,7 @@ namespace Go.Shared.Models
             else
             {
                 passesInARow = 0;
-                moveList.Add(move);
+                moveList.Add(new int[3] { move[0], move[1], color });
                 deltas.Add(new Delta(oldBoard, board));
                 if (state == status.BlacksTurn)
                     state = status.WhitesTurn;
@@ -99,6 +101,7 @@ namespace Go.Shared.Models
                 else
                     this.state = status.Draw;
             }
+            deltas.Add(new Delta());
             thisMove++;
             totalMoves++;
         }
@@ -156,6 +159,11 @@ namespace Go.Shared.Models
                 }
             }
 
+            public Delta()
+            {
+                deltas = new List<int[]>();
+            }
+
             /// <summary>
             /// Applies or reverts the move
             /// </summary>
@@ -177,6 +185,23 @@ namespace Go.Shared.Models
         {
             this.thisMove = 0;
             this.board = new Board(size);
+        }
+
+        public string Result()
+        {
+            if (state == status.BlackWon)
+            {
+                return "1-0";
+            } else if (state == status.WhiteWon)
+            {
+                return "0-1";
+            } else if (state == status.Draw)
+            {
+                return "1/2-1/2";
+            } else
+            {
+                return "0-0";
+            }
         }
     }
 }

@@ -13,9 +13,26 @@
 
 
 
-<h3>Analysis for game id = @Id</h3>
+@if (game.player2 is null)
+            {
+                <h3>Analysis for local game:</h3>
+            } else
+            {
+                <h3>Analysis for @(game.player1) vs @game.player2):</h3>
+            }
 <br />
+<div class="turn-options inline">
+    <div>
+        <div class="inline" style="font-size: 24px;"><b>Black's Score: </b></div>
+        <p class="inline" style="font-size: 24px;">@(game.getScore()[0])</p>
+    </div>
+    <div>
+        <p class="inline" style="font-size: 24px;"><b>White's Score: </b></p>
+        <p class="inline" style="font-size: 24px;">@(game.getScore()[1])</p>
+    </div>
+</div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    <div>
     @if (dimensions == 19)
     {
         <div @ref="divCanvas" class="board-canvas-19">
@@ -34,6 +51,26 @@
             <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
         </div>
     }
+    </div>
+    <div style="width: 20px"/>
+    <div>
+        <table>
+            <tr>
+                <th>Black</th>
+                <th>White</th>
+            </tr>
+            @for(int i = 0; i < moves.Count; i += 2)
+            {
+                <tr>
+                    <td style="@(i + 1== game.thisMove ? "font-weight:bold" : "")">@(moves[i])</td>
+                    @if (i + 1 < moves.Count)
+                    {
+                        <td style="@(i + 2 == game.thisMove ? "font-weight:bold" : "")">@(moves[i + 1])</td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
 </div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     <button type="button" @onclick="Back">&lt;</button>&nbsp;
@@ -45,8 +82,9 @@
 @code {
     [Parameter]
     public String Id { get; set; }
-    Game game;
-    int dimensions;
+    private Game game;
+    private List<string> moves;
+    private int dimensions;
 
     ElementReference divCanvas;
     Blazor.Extensions.BECanvasComponent stones;
@@ -57,6 +95,7 @@
         game = GameDBInterface.GetGame(Id);
         game.ResetToStart();
         dimensions = game.size;
+        moves = GenMoves();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -105,5 +144,25 @@
                 }
             }
         }
+    }
+
+    private List<String> GenMoves()
+    {
+        int color = 1;
+        int currMove = 1;
+        List<string> moves = new List<string>();
+        foreach (int[] move in game.moveList)
+        {
+            if (move[2] != color)
+            {
+                moves.Add(currMove.ToString() + ". Pass");
+                currMove++;
+                color *= -1;
+            }
+            moves.Add(currMove.ToString() + ". " + (char)(move[0] + 65) + (19 - move[1]).ToString());
+            currMove++;
+            color *= -1;
+        }
+        return moves;
     }
 }
