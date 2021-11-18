@@ -62,11 +62,12 @@ else
             </tr>
             @for (int i = 0; i < moves.Count; i += 2)
             {
+                int index = i;
                 <tr>
-                    <td style="@(i + 1== game.thisMove ? "font-weight:bold" : "")">@(moves[i])</td>
+                    <td style="@(index + 1== game.thisMove ? "font-weight:bold; cursor:pointer;" : "cursor:pointer;")" @onclick="async () => await SetMove(index + 1)">@(moves[index])</td>
                     @if (i + 1 < moves.Count)
                     {
-                        <td style="@(i + 2 == game.thisMove ? "font-weight:bold" : "")">@(moves[i + 1])</td>
+                        <td style="@(index + 2 == game.thisMove ? "font-weight:bold; cursor:pointer;" : "cursor:pointer;")" @onclick="async () => await SetMove(index + 2)">@(moves[index + 1])</td>
                     }
                 </tr>
             }
@@ -74,8 +75,8 @@ else
     </div>
 </div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
-    <button type="button" @onclick="Back">&lt;</button>&nbsp;
-    <button type="button" @onclick="Forward">&gt;</button>
+    <button type="button" @onclick="async () => await Back()">&lt;</button>&nbsp;
+    <button type="button" @onclick="async () => await Forward()">&gt;</button>
 </div>
 <br />
 
@@ -109,16 +110,26 @@ else
         }
     }
 
+    private async Task SetMove(int move)
+    {
+        game.SetMove(move);
+        await Refresh();
+    }
+
     private async Task Back()
     {
-        game.StepBack();
-        await Refresh();
+        if (game.StepBack())
+        {
+            await Refresh();
+        }
     }
 
     private async Task Forward()
     {
-        game.StepForward();
-        await Refresh();
+        if (game.StepForward())
+        {
+            await Refresh();
+        }
     }
 
     private async Task Refresh()
