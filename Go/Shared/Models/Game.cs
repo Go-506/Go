@@ -113,7 +113,7 @@ namespace Go.Shared.Models
 
         public void StepForward()
         {
-            if (thisMove < totalMoves)
+            if (thisMove < totalMoves - 1)
             {
                 board = deltas[thisMove].Apply(board, 1);
                 thisMove++;
