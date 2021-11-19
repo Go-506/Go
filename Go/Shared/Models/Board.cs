@@ -370,36 +370,6 @@ namespace Go.Shared.Models
             return adjacents;
         }
 
-        /// <summary>
-        /// Helper method for getConnected(). 
-        /// </summary>
-        /// <param name="stone"></param>
-        /// <param name="list"></param>
-        /// <returns>True if the stone has an adjacent stone not in list,
-        /// false otherwise</returns>
-        private Boolean hasAdjacentsNotInList(int[] stone, ArrayList list)
-        {
-            Boolean[] adj = findAdjacents(stone, board);
-
-            if (adj[0] && !list.Contains(new int[stone[0], stone[1] - 1]))
-            {
-                return true;
-            }
-            if (adj[1] && !list.Contains(new int[stone[0], stone[1] + 1]))
-            {
-                return true;
-            }
-            if (adj[2] && !list.Contains(new int[stone[0] - 1, stone[1]]))
-            {
-                return true;
-            }
-            if (adj[3] && !list.Contains(new int[stone[0] + 1, stone[1]]))
-            {
-                return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Helper method to find if an ArrayList contains a specified
