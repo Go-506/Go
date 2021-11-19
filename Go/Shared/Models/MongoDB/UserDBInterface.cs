@@ -28,6 +28,11 @@ namespace Go.Shared.Models.MongoDB
             IMongoCollection<IUser> coll = Globals.USERS;
             return coll.Find(x => x.name.Equals(name)).FirstOrDefault();
         }
+        public static IUser GetUserFromConnString(string name)
+        {
+            IMongoCollection<IUser> coll = Globals.USERS;
+            return coll.Find(x => ((Player)x).connection_string.Equals(name)).FirstOrDefault();
+        }
 
         public static bool UpdateUser(IUser user)
         {
@@ -35,7 +40,12 @@ namespace Go.Shared.Models.MongoDB
             InsertUser(user);
             return true;
         }
-
+        public static bool setConnectionString(Player user, String connection_string)
+        {
+            user.setConnectionString(connection_string);
+            UpdateUser(user);
+            return true;
+        }
     }
 }
 

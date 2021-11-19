@@ -22,6 +22,7 @@ namespace Go.Shared.Models
         public string type { get; protected set; }
         public string password { get; protected set; }
         public List<ObjectId> gameHistory { get; protected set; }
+        public string connection_string { get; protected set; }
     }
 
 
@@ -55,6 +56,11 @@ namespace Go.Shared.Models
         public void addGame(Game game)
         {
             gameHistory.Add(game.Id);
+        }
+
+        public void setConnectionString(string conn)
+        {
+            connection_string = conn;
         }
     }
 
