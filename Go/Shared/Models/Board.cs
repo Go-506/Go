@@ -370,7 +370,7 @@ namespace Go.Shared.Models
             return adjacents;
         }
 
-
+   
         /// <summary>
         /// Helper method to find if an ArrayList contains a specified
         /// int[]. The built in .Contains() method cannot be used because
