@@ -43,8 +43,8 @@ namespace Go
 
         public static async Task<IUser> GetUser(ILocalStorageService localStorage)
         {
-            string username = await localStorage.GetItemAsync<string>("user");
-            return UserDBInterface.GetUser(username);
+            string connection_string = await localStorage.GetItemAsync<string>("connection_string");
+            return UserDBInterface.GetUserFromConnString(connection_string);
         }
 
         public static async Task SetUser(ILocalStorageService localStorage, IUser user)
@@ -55,13 +55,14 @@ namespace Go
             }
             else
             {
-                await localStorage.SetItemAsync<string>("user", user.name);
+                UserDBInterface.setConnectionString(((Player)user), GenerateConnectionString(16));
+                await localStorage.SetItemAsync<string>("connection_string", user.connection_string);
             }
         }
 
         public static async Task LogoutUser(ILocalStorageService localStorage)
         {
-            await localStorage.RemoveItemAsync("user");
+            await localStorage.RemoveItemAsync("connection_string");
         }
 
         // More testable way to set the globals.
@@ -69,6 +70,15 @@ namespace Go
         {
             return db.GetCollection<T>(t);
         }
-
+        private static string GenerateConnectionString(int length)
+        {
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            string connection_string = new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            if (UserDBInterface.GetUserFromConnString(connection_string) != null)
+                connection_string = GenerateConnectionString(length);
+            return connection_string;
+        }
     }
 }
