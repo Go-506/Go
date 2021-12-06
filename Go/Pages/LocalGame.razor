@@ -222,22 +222,24 @@
             if (stones != null && currentCanvasContext != null && move != null)
             {
                 ArrayList capturedPeices = new ArrayList();
-                try {capturedPeices = game.playMove(move[0], move[1]); illegal = ""; }
-                catch (IllegalMoveException e) { illegal = "Illegal move - try again."; }
-                blackScore = game.getScore()[0];
-                whiteScore = game.getScore()[1];
-                if (game.state == status.WhitesTurn)
-                    turn = "White's Turn";
-                else if (game.state == status.BlacksTurn)
-                    turn = "Black's Turn";
-                else
-                {
-                    turn = "";
-                    gameOver = true;
+                try {
+                    capturedPeices = game.playMove(move[0], move[1]); illegal = ""; 
+                    blackScore = game.getScore()[0];
+                    whiteScore = game.getScore()[1];
+                    if (game.state == status.WhitesTurn)
+                        turn = "White's Turn";
+                    else if (game.state == status.BlacksTurn)
+                        turn = "Black's Turn";
+                    else
+                    {
+                        turn = "";
+                        gameOver = true;
+                    }
+                    GameDBInterface.UpdateGame(game);
+                    await DrawStone(move);
+                    await RemoveStones(capturedPeices);
                 }
-                GameDBInterface.UpdateGame(game);
-                await DrawStone(move);
-                await RemoveStones(capturedPeices);
+                catch (IllegalMoveException e) { illegal = "Illegal move - try again."; }
             }
         }
         isLoadingOnClick = false;

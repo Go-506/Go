@@ -11,7 +11,7 @@ using Go.Shared.Models.MongoDB;
 
 namespace Go.Shared.Models
 {
-    class IllegalMoveException : Exception {
+    public class IllegalMoveException : Exception {
         
     }
     public enum status
@@ -211,6 +211,7 @@ namespace Go.Shared.Models
         {
             this.thisMove = 0;
             this.board = new Board(size);
+            this.state = status.BlacksTurn;
         }
 
         public string Result()
