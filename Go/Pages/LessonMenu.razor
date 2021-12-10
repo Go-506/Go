@@ -1,6 +1,10 @@
 ﻿@page "/lessonmenu"
 @using Shared.Models
 @using Shared.Models.MongoDB;
+@using System;
+@using System.IO;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <h2>Lessons:</h2>
@@ -32,6 +36,17 @@
         }
         IUser userInstance = UserDBInterface.GetUser(user);
 
+        if (firstRender)
+        {
+            /*IMPORTANT: probably won't work on mac due to pathing differences. fix later*/
+            foreach (string file in Directory.GetFiles("wwwroot\\lessons")) 
+            {
+                string jsonstr = File.ReadAllText(file);
+                Lesson parsedlesson = JsonSerializer.Deserialize<Lesson>(jsonstr);
+                Console.WriteLine(parsedlesson);
+                // Globals.LESSONS.UpdateMany();
+            }
+        }
     }
 
     private List<Shared.Models.Lesson> GetLessons()
