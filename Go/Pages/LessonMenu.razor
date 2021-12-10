@@ -1,6 +1,10 @@
 ﻿@page "/lessonmenu"
 @using Shared.Models
 @using Shared.Models.MongoDB;
+@using System;
+@using System.IO;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <h2>Lessons:</h2>
@@ -19,15 +23,31 @@
     }
 </table>
 @code {
-    [Parameter]
-    public string user { get; set; }
+        [Parameter]
+        public string user { get; set; }
     private List<Shared.Models.Lesson> lessons;
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        user = (await Globals.GetUser(localStorage)).name;
+        if (user != null)
+        {
+            user = (await Globals.GetUser(localStorage)).name;
+        }
         IUser userInstance = UserDBInterface.GetUser(user);
+
+        if (firstRender)
+        {
+            Globals.LESSONS.Database.DropCollection("lessons");
+            /*IMPORTANT: probably won't work on mac due to pathing differences. fix later*/
+            foreach (string file in Directory.GetFiles("wwwroot\\lessons")) 
+            {
+                string jsonstr = File.ReadAllText(file);
+                Console.WriteLine(jsonstr);
+                Shared.Models.Lesson parsedlesson = JsonSerializer.Deserialize<Shared.Models.Lesson>(jsonstr);
+                Globals.LESSONS.InsertOne(parsedlesson);
+            }
+        }
     }
 
     private List<Shared.Models.Lesson> GetLessons()

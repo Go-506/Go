@@ -7,5 +7,10 @@ namespace Go.Shared.Models
 {
     public class LessonPage
     {
+        public string text { get; set; }
+        public LessonPage()
+        {
+
+        }
     }
 }

@@ -16,9 +16,10 @@ namespace Go.Shared.Models
         public string name { get; protected set; }
         public List<LessonPage> lessonPages { get; protected set; }
 
-        public Lesson(string name)
+        public Lesson(string name, List<LessonPage> lessonPages)
         {
             this.name = name;
+            this.lessonPages = lessonPages;
         }
     }
 }
