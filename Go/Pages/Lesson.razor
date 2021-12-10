@@ -1,7 +1,27 @@
 ﻿@page "/lesson"
+@page "/lesson/{lesson_name}"
+@using Blazor.Extensions
+@using Blazor.Extensions.Canvas
+@using Blazor.Extensions.Canvas.Canvas2D
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@using Shared.Models
+@using System.Collections;
+@using Shared.Models.MongoDB;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
 
-<h3>Lesson</h3>
+
+<h3>Lesson: @lesson_name</h3>
+
 
 @code {
+    [Parameter]
+    public String lesson_name { get; set; }
+    private Shared.Models.Lesson lesson;
 
+    protected override async Task OnInitializedAsync()
+    {
+        lesson = LessonDBInterface.GetLesson(lesson_name);
+    }
 }
