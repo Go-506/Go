@@ -27,7 +27,16 @@
         <p class="inline" style="font-size: 24px;"><b>White's Score: </b></p>
         <p class="inline" style="font-size: 24px;">@whiteScore</p>
     </div>
+    <div>
+        <div class="inline" style="font-size: 20px;"><b>Pieces captured by Black: </b></div>
+        <p class="inline" style="font-size: 20px;">@blackCapt</p>
+    </div>
+    <div>
+        <p class="inline" style="font-size: 20px;"><b>Pieces captured by White: </b></p>
+        <p class="inline" style="font-size: 20px;">@whiteCapt</p>
+    </div>
     <div style="color: red">@illegal</div>
+    <div>@lastText</div>
 </div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     @if (dimensions.Equals("19"))
@@ -84,8 +93,8 @@
 <br>
 
 @code {
-    [Parameter]
-    public String dimensions { get; set; }
+        [Parameter]
+        public String dimensions { get; set; }
     public static NavigationManager NavMan2;
     int dim;
     ElementReference divCanvas;
@@ -96,8 +105,11 @@
     bool gameOver = false;
     string turn = "Black's Turn";
     string illegal = "";
+    string lastText = "";
     int whiteScore = 0;
     int blackScore = 0;
+    int whiteCapt = 0;
+    int blackCapt = 0;
     Game game;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -223,13 +235,21 @@
             {
                 ArrayList capturedPeices = new ArrayList();
                 try {
-                    capturedPeices = game.playMove(move[0], move[1]); illegal = ""; 
+                    capturedPeices = game.playMove(move[0], move[1]); illegal = "";
                     blackScore = game.getScore()[0];
                     whiteScore = game.getScore()[1];
+                    blackCapt = game.board.captured[0];
+                    whiteCapt = game.board.captured[1];
                     if (game.state == status.WhitesTurn)
+                    {
                         turn = "White's Turn";
+                        lastText = "Black played to " + (Convert.ToChar(65 + move[0])) + (9 - move[1]);
+                    }
                     else if (game.state == status.BlacksTurn)
+                    {
                         turn = "Black's Turn";
+                        lastText = "White played to " + (Convert.ToChar(65 + move[0])) + (9 - move[1]);
+                    }
                     else
                     {
                         turn = "";

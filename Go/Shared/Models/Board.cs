@@ -21,18 +21,22 @@ namespace Go.Shared.Models
         public int[] score;
         // [0]: white pieces captured (by black), [1]: black pieces captured (by white)
         public int[] captured;
+        // if only one piece captured last move, used to check for ko
+        public int[] lastCapt;
 
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
             score = new int[] { 0, 0 };
             captured = new int[] { 0, 0 };
+            lastCapt = new int[] { -1, -1 };
         }
 
         public Board(int[,] state)
         {
             board = (int[,]) state.Clone();
             captured = new int[] { 0, 0 };
+            lastCapt = new int[] { -1, -1 };
             score = getScore(board);
         }
 
@@ -52,6 +56,8 @@ namespace Go.Shared.Models
             ArrayList capturedPieces = moveIsLegal(move);
             if (capturedPieces != null)
             {
+                if (capturedPieces.Count == 1) lastCapt = (int[])capturedPieces[0];
+                else lastCapt = new int[] { -1, -1 };
                 if (move[2] == 1) this.captured[0] += capturedPieces.Count;
                 else this.captured[1] += capturedPieces.Count;
                 int[] newScore = getScore(this.board);
@@ -74,6 +80,12 @@ namespace Go.Shared.Models
         {
             //check coord not empty
             if (board[move[0], move[1]] != 0)
+            {
+                return null;
+            }
+
+            // checks for ko violation
+            if (move[0] == lastCapt[0] && move[1] == lastCapt[1])
             {
                 return null;
             }
