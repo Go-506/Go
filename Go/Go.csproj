@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Content Remove="C:\Users\joe\.nuget\packages\stgtour.gtour\1.0.7\contentFiles\any\net50\tsconfig.json" />
+    <Content Remove="C:\Users\schue\.nuget\packages\stgtour.gtour\1.0.7\contentFiles\any\net50\tsconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
