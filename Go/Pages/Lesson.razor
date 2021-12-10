@@ -1,7 +1,217 @@
 ﻿@page "/lesson"
+@using Blazor.Extensions
+@using Blazor.Extensions.Canvas
+@using Blazor.Extensions.Canvas.Canvas2D
+@using GTour.Components
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@using Shared.Models
+@using System.Collections;
+@using Shared.Models.MongoDB;
+@inject NavigationManager NavMan
+@inject IJSRuntime jsRuntime
 
-<h3>Lesson</h3>
+<GuidedTour TourId="FormGuidedTour" OverlayEnabled="true">
+    <GuidedTourStep Title="Go Basics" StepName="firstStep" TourStepSequence="1" ElementSelector="[board]" >
+        <ChildContent>
+            <div>This is a Go Board. For this lesson, we will be demonstrating using a 9x9 board. Other sizes include 13x13, and 19x19.</div>
+        </ChildContent>
+    </GuidedTourStep>
+</GuidedTour>
+<h2 style="padding-right: 150px; text-align: center;"><b>@turn</b></h2>
+<div style="display: flex; padding-right: 150px; justify-content: center; align-items: center; height: auto;">
+    <button class="btn-primary" @onclick="Pass" style="font-size: 16px; align-self: center;">Pass</button>
+</div>
+<br />
+<div class="turn-options inline">
+    <div>
+        <div class="inline" style="font-size: 24px;"><b>Black's Score: </b></div>
+        <p class="inline" style="font-size: 24px;">@blackScore</p>
+    </div>
+    <div>
+        <p class="inline" style="font-size: 24px;"><b>White's Score: </b></p>
+        <p class="inline" style="font-size: 24px;">@whiteScore</p>
+    </div>
+    <div style="color: red">@illegal</div>
+</div>
+<div style="display: flex; justify-content: center; align-items: center; height: auto;">
+    <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-9" board >
+        <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+    </div>
+</div>
+@if (starting)
+{
+    <div class="modal fade show d-block" id="tour-start" tabindex="-1" role="dialog" style="place-content:center; vertical-align:central;" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titleLabel">1. Go Basics</h5>
+                </div>
+                <div class="modal-body">
+                    <div>Welcome to your first lesson! We will start by going over the very basics of the game of Go.</div>
+                    <br />
+                    <button type="submit" class="btn btn-primary" @onclick="async () => await StartTour()">Begin Lesson</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<br>
 
 @code {
+    [Inject]
+    private GTour.Abstractions.IGTourService GTourService { get; set; }
+    public static NavigationManager NavMan2;
+    ElementReference divCanvas;
+    Blazor.Extensions.BECanvasComponent stones;
+    Canvas2DContext currentCanvasContext;
+    bool clickable = false;
+    IUser user;
+    bool gameOver = false;
+    bool starting = true;
+    string turn = "Black's Turn";
+    string illegal = "";
+    int dim = 9;
+    int whiteScore = 0;
+    int blackScore = 0;
+    Game game;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            NavMan2 = NavMan;
+            currentCanvasContext = await stones.CreateCanvas2DAsync();
+
+            game = new Game(dim, null, null);
+            StateHasChanged();
+        }
+
+
+    }
+
+    private async Task StartTour()
+    {
+        starting = false;
+        await GTourService.GoToStep("firstStep");
+        await GTourService.StartTour("FormGuidedTour");
+    }
+
+    private void Close()
+    {
+        gameOver = false;
+    }
+
+    private void Reset()
+    {
+        NavMan2.NavigateTo(NavMan2.Uri, forceLoad: true);
+        Close();
+    }
+
+    async void Pass()
+    {
+        game.passTurn();
+        if (game.state == status.WhitesTurn)
+            turn = "White's Turn";
+        else if (game.state == status.BlacksTurn)
+            turn = "Black's Turn";
+        else
+        {
+            turn = "";
+            gameOver = true;
+        }
+        GameDBInterface.UpdateGame(game);
+    }
+
+    int[] GetMove(double mouseX, double mouseY)
+    {
+        for (int i = 0; i < dim; i++)
+        {
+            for (int j = 0; j < dim; j++)
+            {
+                int x = (i * 30) + 40;
+                int y = (j * 30) + 40;
+                if (mouseX < x + 10 && mouseX > x - 10 && mouseY < y + 10 && mouseY > y - 10)
+                {
+                    return new int[] { i, j };
+                }
+            }
+        }
+        return null;
+    }
+
+    async Task DrawStone(int[] move)
+    {
+        if (game.state == status.WhitesTurn)
+        {
+            await currentCanvasContext.SetFillStyleAsync("Black");
+
+        }
+        else
+        {
+            await currentCanvasContext.SetFillStyleAsync("White");
+        }
+        await currentCanvasContext.BeginPathAsync();
+        await currentCanvasContext.ArcAsync(move[0] * 30 + 40, move[1] * 30 + 40, 10, 0, 2 * Math.PI);
+        await currentCanvasContext.ClosePathAsync();
+        await currentCanvasContext.FillAsync();
+
+    }
+
+    async Task RemoveStones(ArrayList capturedPeices)
+    {
+        if (capturedPeices != null || capturedPeices.Count != 0)
+        {
+            foreach (int[] coord in capturedPeices)
+            {
+                int x = (coord[0] * 30) + 30;
+                int y = (coord[1] * 30) + 30;
+                await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
+            }
+        }
+    }
+
+    async Task OnClick(MouseEventArgs eventArgs)
+    {
+        if (!clickable)
+        {
+            return;
+        }
+        if (game.state != status.BlacksTurn && game.state != status.WhitesTurn)
+        {
+            return;
+        }
+        clickable = false;
+        double mouseX = 0;
+        double mouseY = 0;
+        if (divCanvas.Id?.Length > 0)
+        {
+            string data = await jsRuntime.InvokeAsync<string>("getDivCanvasOffsets", new object[] { divCanvas });
+            JObject offsets = (JObject)JsonConvert.DeserializeObject(data);
+            mouseX = eventArgs.ClientX - offsets.Value<double>("offsetLeft");
+            mouseY = eventArgs.ClientY - offsets.Value<double>("offsetTop");
+            int[] move = GetMove(mouseX, mouseY);
+
+            if (stones != null && currentCanvasContext != null && move != null)
+            {
+                ArrayList capturedPeices = new ArrayList();
+                try { capturedPeices = game.playMove(move[0], move[1]); illegal = ""; }
+                catch (IllegalMoveException e) { illegal = "Illegal move - try again."; }
+                blackScore = game.getScore()[0];
+                whiteScore = game.getScore()[1];
+                if (game.state == status.WhitesTurn)
+                    turn = "White's Turn";
+                else if (game.state == status.BlacksTurn)
+                    turn = "Black's Turn";
+                else
+                {
+                    turn = "";
+                    gameOver = true;
+                }
+                GameDBInterface.UpdateGame(game);
+                await DrawStone(move);
+                await RemoveStones(capturedPeices);
+            }
+        }
+    }
 }
