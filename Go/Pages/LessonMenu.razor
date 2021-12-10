@@ -1,8 +1,39 @@
 ﻿@page "/lessonmenu"
+@using Shared.Models
+@using Shared.Models.MongoDB;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
-<h1 style="text-align: center;"><b>Lessons</b></h1>
-<br>
-<a href="/lesson">1. Go Basics</a>
+<h2>Lessons:</h2>
+<br />
+<table>
+    @if (GetLessons() != null)
+    {
+        @foreach (Shared.Models.Lesson lesson in GetLessons())
+        {
+            <tr>
+                <td>
+                    <a href="/lesson/@(lesson.name)">@(lesson.name)</a>
+                </td>
+            </tr>
+        }
+    }
+</table>
 @code {
-    
+    [Parameter]
+    public string user { get; set; }
+    private List<Shared.Models.Lesson> lessons;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        user = (await Globals.GetUser(localStorage)).name;
+        IUser userInstance = UserDBInterface.GetUser(user);
+    }
+
+    private List<Shared.Models.Lesson> GetLessons()
+    {
+        IUser userInstance = UserDBInterface.GetUser(user);
+        lessons = LessonDBInterface.GetLessonList();
+        return lessons;
+    }
 }
