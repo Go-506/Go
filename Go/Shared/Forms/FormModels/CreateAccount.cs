@@ -16,6 +16,7 @@ namespace Go.Shared.Forms.FormModels
         public string Username { get; set; }
         [Required]
         [EmailAddress]
+        [UniqueEmailAddress]
         public string Email { get; set; }
         [Required]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
@@ -35,6 +36,25 @@ namespace Go.Shared.Forms.FormModels
             } else
             {
                 return new ValidationResult("Username must be unique.");
+            }
+
+        }
+    }
+
+    public class UniqueEmailAddress: ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            string email = (string)value;
+            IMongoCollection<IUser> coll = Globals.DB.GetCollection<IUser>("users");
+            IUser alreadyThere = coll.Find(x => x.email.Equals(email)).FirstOrDefault();
+            if (alreadyThere == null)
+            {
+                return ValidationResult.Success;
+            }
+            else
+            {
+                return new ValidationResult("Email must be unique.");
             }
 
         }
