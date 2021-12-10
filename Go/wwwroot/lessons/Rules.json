@@ -1,5 +1,5 @@
 {
-    "_id": "Rules",
+    "name": "Rules",
     "lessonPages": [
       { "text": "The rules of go are simple. It's played by two players, white and black. White and black alternate turns, with black starting first." },
       { "text": "Game pieces (called stones) are played on the intersections of a grid. You capture the opponent's stones by removing all liberties of their stone. A liberty of a stone is simply an empty space directly adjacent (up/down/left/right - no diagonals) to the stone, or to any stone connected to that stone. One stone is considered connected to another stone of the same color if you can get to one stone from the other by jumping to directly adjacent stones.\n\nSimply put, stones can be considered to form clusters, and to capture a cluster, you must remove all empty spaces touching it." },

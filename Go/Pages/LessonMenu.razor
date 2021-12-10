@@ -42,9 +42,8 @@
             foreach (string file in Directory.GetFiles("wwwroot\\lessons")) 
             {
                 string jsonstr = File.ReadAllText(file);
-                Lesson parsedlesson = JsonSerializer.Deserialize<Lesson>(jsonstr);
-                Console.WriteLine(parsedlesson);
-                // Globals.LESSONS.UpdateMany();
+                Shared.Models.Lesson parsedlesson = JsonSerializer.Deserialize<Shared.Models.Lesson>(jsonstr);
+                Globals.LESSONS.InsertOne(parsedlesson);
             }
         }
     }
