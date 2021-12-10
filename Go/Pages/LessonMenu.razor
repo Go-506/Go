@@ -19,15 +19,19 @@
     }
 </table>
 @code {
-    [Parameter]
-    public string user { get; set; }
+        [Parameter]
+        public string user { get; set; }
     private List<Shared.Models.Lesson> lessons;
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        user = (await Globals.GetUser(localStorage)).name;
+        if (user != null)
+        {
+            user = (await Globals.GetUser(localStorage)).name;
+        }
         IUser userInstance = UserDBInterface.GetUser(user);
+
     }
 
     private List<Shared.Models.Lesson> GetLessons()
