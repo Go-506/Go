@@ -30,7 +30,9 @@
     protected override async Task OnInitializedAsync()
     {
         lesson = LessonDBInterface.GetLesson(lesson_name);
-        currPage = lesson.lessonPages.ElementAt(0);
+        Console.WriteLine(lesson.name);
+        Console.WriteLine(lesson.lessonPages);
+        currPage = lesson.lessonPages.ElementAt<LessonPage>(0);
         currIndex = 0;
     }
 
