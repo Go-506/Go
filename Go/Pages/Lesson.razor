@@ -16,8 +16,8 @@
 
 
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
-    <button type="button" @onclick="async () => await Back()" hidden=@(currIndex==0)>&lt;</button>&nbsp;
-    <button type="button" @onclick="async () => await Forward()" hidden=@(currIndex==lesson.lessonPages.Count-1)>&gt;</button>
+    <button type="button" @onclick="async () => await Back()" disabled=@(currIndex==0)>&lt;</button>&nbsp;
+    <button type="button" @onclick="async () => await Forward()" disabled=@(currIndex==lesson.lessonPages.Count-1)>&gt;</button>
 </div>
 
 @code {
