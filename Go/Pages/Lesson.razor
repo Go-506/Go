@@ -12,7 +12,8 @@
 
 
 <h3>Lesson: @lesson_name</h3>
-<div>@(currPage.text) </div>
+<img hidden=@(currPage.img==null) src=@("images/"+currPage.img)/>
+<div>@(currPage.text)</div>
 
 
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
@@ -30,8 +31,6 @@
     protected override async Task OnInitializedAsync()
     {
         lesson = LessonDBInterface.GetLesson(lesson_name);
-        Console.WriteLine(lesson.name);
-        Console.WriteLine(lesson.lessonPages);
         currPage = lesson.lessonPages.ElementAt<LessonPage>(0);
         currIndex = 0;
     }
