@@ -3,7 +3,39 @@
     "lessonPages": [
       { "text": "The rules of go are simple. It's played by two players, black and white. Black and white alternate turns, with black starting first." },
       { "img": "liberties.png", "text": "Game pieces (called stones) are played on the intersections of a grid. You capture the opponent's stones by removing all liberties of their stone. A liberty of a stone is simply an empty space directly adjacent (up/down/left/right - no diagonals) to the stone, or to any stone connected to that stone. One stone is considered connected to another stone of the same color if you can get to one stone from the other by jumping to directly adjacent stones.\n\nSimply put, stones can be considered to form clusters, and to capture a cluster, you must remove all empty spaces touching it. In the above example, (D7, C6, E6) are the liberties of the black stone." },
-      { "text": "The game ends after both players pass in a row. A player's score is the number of opponent's pieces they captured plus the area they control. Area is controlled if it is inside a closed ring of stones." }
+      {
+        "text": "The game ends after both players pass in a row. A player's score is the number of opponent's pieces they captured plus the area they control. Area is controlled if it is inside a closed ring of stones.",
+        "game": {
+          "_id": { "$oid": "61b300934834ab6ef339e4e5" },
+          "moveList": [
+            [ 12, 2, 1 ],
+            [ 11, 2, -1 ],
+            [ 9, 2, 1 ],
+            [ 9, 3, -1 ]
+          ],
+          "deltas": [
+            { "deltas": [ [ 12, 2, 1 ] ] },
+            { "deltas": [ [ 11, 2, -1 ] ] },
+            { "deltas": [ [ 9, 2, 1 ] ] },
+            { "deltas": [ [ 9, 3, -1 ] ] },
+            { "deltas": [] },
+            { "deltas": [] }
+          ],
+          "board": {
+            "score": [ 2, 2 ],
+            "captured": [ 0, 0 ],
+            "lastCapt": [ -1, -1 ]
+          },
+          "size": 19,
+          "thisMove": 6,
+          "totalMoves": 6,
+          "player1": "a",
+          "player2": null,
+          "state": 4,
+          "passesInARow": 2,
+          "date": "12/10/2021"
+        }
+      }
     ]
  }
 
