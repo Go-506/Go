@@ -13,13 +13,16 @@
             {
                 <tr>
                     <td>
-                        @if (game.player2 == null)
+                        @if (game != null)
                         {
-                            <a href="/analysisboard/@(game.Id)">Local Game on @(game.date) (@(game.Result()))</a>
-                        }
-                        else
-                        {
-                            <a href="/analysisboard/@(game.Id)">Online vs @(game.player2) on @(game.date) (@(game.Result()))</a>
+                            @if (game.player2 == null)
+                            {
+                                <a href="/analysisboard/@(game.Id)">Local Game on @(game.date) (@(game.Result()))</a>
+                            }
+                            else
+                            {
+                                <a href="/analysisboard/@(game.Id)">Online vs @(game.player2) on @(game.date) (@(game.Result()))</a>
+                            }
                         }
                     </td>
                 </tr>

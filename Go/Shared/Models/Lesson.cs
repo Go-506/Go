@@ -13,12 +13,12 @@ namespace Go.Shared.Models
     public class Lesson
     {
         [BsonId]
-        public string name { get; protected set; }
-        public List<LessonPage> lessonPages { get; protected set; }
-
-        public Lesson(string name)
+        public string name { get; set; }
+        public List<LessonPage> lessonPages { get; set; }
+        public Lesson(string name, List<LessonPage> lessonPages)
         {
             this.name = name;
+            this.lessonPages = lessonPages;
         }
     }
 }

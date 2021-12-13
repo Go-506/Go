@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Text.Json.Serialization;
 
 namespace Go.Shared.Models
 {
@@ -24,6 +25,15 @@ namespace Go.Shared.Models
         // if only one piece captured last move, used to check for ko
         public int[] lastCapt;
 
+        [JsonConstructorAttribute]
+        public Board()
+        {
+            board = new int[9, 9];
+            score = new int[] { 0, 0 };
+            captured = new int[] { 0, 0 };
+            lastCapt = new int[] { -1, -1 };
+        }
+
         public Board(int boardSize)
         {
             board = new int[boardSize, boardSize];
@@ -32,6 +42,7 @@ namespace Go.Shared.Models
             lastCapt = new int[] { -1, -1 };
         }
 
+        
         public Board(int[,] state)
         {
             board = (int[,]) state.Clone();
