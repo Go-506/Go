@@ -50,8 +50,10 @@
           "state": 2,
           "passesInARow": 2,
           "date": "12/12/2021"
-        }
-
+        },
+        "solution": [
+          [ 4, 6 ]
+        ]
       }
     }
   ]

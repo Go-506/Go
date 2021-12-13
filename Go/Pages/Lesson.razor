@@ -63,7 +63,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender & stones != null)
+        if (firstRender && stones != null)
         {
             currentCanvasContext = await stones.CreateCanvas2DAsync();
             game.ResetToStart();
@@ -138,6 +138,7 @@
 
     async Task OnClick(MouseEventArgs eventArgs)
     {
+
         if (isLoadingOnClick)
         {
             return;
@@ -146,9 +147,11 @@
         {
             return;
         }
+
         isLoadingOnClick = true;
         double mouseX = 0;
         double mouseY = 0;
+
         if (divCanvas.Id?.Length > 0)
         {
             string data = await jsRuntime.InvokeAsync<string>("getDivCanvasOffsets", new object[] { divCanvas });
@@ -156,6 +159,28 @@
             mouseX = eventArgs.ClientX - offsets.Value<double>("offsetLeft");
             mouseY = eventArgs.ClientY - offsets.Value<double>("offsetTop");
             int[] move = GetMove(mouseX, mouseY);
+
+            if (move == null)
+            {
+                isLoadingOnClick = false;
+                return;
+            }
+
+            if (puzzle.solution.Count() == 0)
+            {
+                isLoadingOnClick = false;
+                return;
+            }
+            Console.WriteLine(move[0] + " " + move[1]);
+            int[] sln = puzzle.solution.Peek();
+
+            Console.WriteLine(sln[0] + " " + sln[1]);
+            if (move[0] != sln[0] || move[1] != sln[1])
+            {
+                isLoadingOnClick = false;
+                return;
+            }
+            puzzle.solution.Dequeue();
 
             if (stones != null && currentCanvasContext != null && move != null)
             {

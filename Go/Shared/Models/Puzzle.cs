@@ -9,7 +9,7 @@ namespace Go.Shared.Models
     public class Puzzle
     {
         public Game game { get; set; }
-        public List<int[]> solution { get; set; }
+        public Queue<int[]> solution { get; set; }
         public Puzzle(Game game)
         {
             this.game = game;
