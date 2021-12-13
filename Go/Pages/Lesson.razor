@@ -15,7 +15,7 @@
 <img hidden=@(currPage.img==null) src=@("images/"+currPage.img)/>
 
 
-@if (puzzle != null)
+@if (game != null)
 {
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     <div>
@@ -43,7 +43,7 @@
     private Shared.Models.Puzzle puzzle;
     private Shared.Models.Game game;
     private int currIndex;
-
+    private int dimensions = 9;
 
 
     ElementReference divCanvas;
@@ -57,10 +57,65 @@
         game = currPage.game;
         if (game != null)
         {
+            //game.ResetToStart();
+            //game.SetMove(0);
+            //Console.WriteLine(game.thisMove);
+            //game.SetMove(game.totalMoves);
+            Console.WriteLine(game.thisMove);
+
             puzzle = new Puzzle(game);
         }
         currIndex = 0;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender & stones != null)
+        {
+            currentCanvasContext = await stones.CreateCanvas2DAsync();
+            game.ResetToStart();
+            game.SetMove(game.totalMoves-2);
+            await Refresh();
+            Console.WriteLine(game.thisMove);
+        }
+    }
+
+
+    private async Task Refresh()
+    {
+        int dimensions = 9;
+        for (int i = 0; i < dimensions; i++)
+        {
+            for (int j = 0; j < dimensions; j++)
+            {
+                Console.Write(game.board.getBoard()[i, j]);
+                int color = game.board.getBoard()[i, j];
+                if (color != 0)
+                {
+                    if (color == 1)
+                    {
+                        await currentCanvasContext.SetFillStyleAsync("Black");
+                    }
+                    else if (color == -1)
+                    {
+                        await currentCanvasContext.SetFillStyleAsync("White");
+                    }
+                    await currentCanvasContext.BeginPathAsync();
+                    await currentCanvasContext.ArcAsync(i * 30 + 40, j * 30 + 40, 10, 0, 2 * Math.PI);
+                    await currentCanvasContext.ClosePathAsync();
+                    await currentCanvasContext.FillAsync();
+                }
+                else
+                {
+                    int x = (i * 30) + 30;
+                    int y = (j * 30) + 30;
+                    await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
+                }
+            }
+            Console.WriteLine();
+        }
+    }
+
 
     private async Task Forward()
     {

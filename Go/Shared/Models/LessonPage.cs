@@ -9,7 +9,7 @@ namespace Go.Shared.Models
     {
         public string text { get; set; }
         public string img { get; set; }
-        public Game game { get; set; }
+        public Shared.Models.Game game { get; set; }
         public LessonPage()
         {
 
