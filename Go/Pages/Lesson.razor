@@ -15,11 +15,11 @@
 <img hidden=@(currPage.img==null) src=@("images/"+currPage.img)/>
 
 
-@if (game != null)
+@if (puzzle != null)
 {
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     <div>
-        <div @ref="divCanvas" class="board-canvas-9">
+        <div @ref="divCanvas" @onclick="@(async (MouseEventArgs m) => await OnClick(m))" class="board-canvas-9">
         <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
          </div>
         
@@ -43,7 +43,6 @@
     private Shared.Models.Puzzle puzzle;
     private Shared.Models.Game game;
     private int currIndex;
-    private int dimensions = 9;
 
 
     ElementReference divCanvas;
@@ -54,16 +53,10 @@
     {
         lesson = LessonDBInterface.GetLesson(lesson_name);
         currPage = lesson.lessonPages.ElementAt<LessonPage>(0);
-        game = currPage.game;
-        if (game != null)
+        puzzle = currPage.puzzle;
+        if (puzzle != null)
         {
-            //game.ResetToStart();
-            //game.SetMove(0);
-            //Console.WriteLine(game.thisMove);
-            //game.SetMove(game.totalMoves);
-            Console.WriteLine(game.thisMove);
-
-            puzzle = new Puzzle(game);
+            game = puzzle.game;
         }
         currIndex = 0;
     }
@@ -88,7 +81,6 @@
         {
             for (int j = 0; j < dimensions; j++)
             {
-                Console.Write(game.board.getBoard()[i, j]);
                 int color = game.board.getBoard()[i, j];
                 if (color != 0)
                 {
@@ -112,10 +104,124 @@
                     await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
                 }
             }
-            Console.WriteLine();
         }
     }
 
+    int[] GetMove(double mouseX, double mouseY)
+    {
+        int dim = 9;
+        for (int i = 0; i < dim; i++)
+        {
+            for (int j = 0; j < dim; j++)
+            {
+                int x = (i * 30) + 40;
+                int y = (j * 30) + 40;
+                if (mouseX < x + 10 && mouseX > x - 10 && mouseY < y + 10 && mouseY > y - 10)
+                {
+                    return new int[] { i, j };
+                }
+            }
+        }
+        return null;
+    }
+
+    bool isLoadingOnClick = false;
+    IUser user;
+    bool gameOver = false;
+    string turn = "Black's Turn";
+    string illegal = "";
+    string lastText = "";
+    int whiteScore = 0;
+    int blackScore = 0;
+    int whiteCapt = 0;
+    int blackCapt = 0;
+
+    async Task OnClick(MouseEventArgs eventArgs)
+    {
+        if (isLoadingOnClick)
+        {
+            return;
+        }
+        if (game.state != status.BlacksTurn && game.state != status.WhitesTurn)
+        {
+            return;
+        }
+        isLoadingOnClick = true;
+        double mouseX = 0;
+        double mouseY = 0;
+        if (divCanvas.Id?.Length > 0)
+        {
+            string data = await jsRuntime.InvokeAsync<string>("getDivCanvasOffsets", new object[] { divCanvas });
+            JObject offsets = (JObject)JsonConvert.DeserializeObject(data);
+            mouseX = eventArgs.ClientX - offsets.Value<double>("offsetLeft");
+            mouseY = eventArgs.ClientY - offsets.Value<double>("offsetTop");
+            int[] move = GetMove(mouseX, mouseY);
+
+            if (stones != null && currentCanvasContext != null && move != null)
+            {
+                ArrayList capturedPeices = new ArrayList();
+                try
+                {
+                    capturedPeices = game.playMove(move[0], move[1]); illegal = "";
+                    blackScore = game.getScore()[0];
+                    whiteScore = game.getScore()[1];
+                    blackCapt = game.board.captured[0];
+                    whiteCapt = game.board.captured[1];
+                    if (game.state == status.WhitesTurn)
+                    {
+                        turn = "White's Turn";
+                        lastText = "Black played to " + (Convert.ToChar(65 + move[0])) + (9 - move[1]);
+                    }
+                    else if (game.state == status.BlacksTurn)
+                    {
+                        turn = "Black's Turn";
+                        lastText = "White played to " + (Convert.ToChar(65 + move[0])) + (9 - move[1]);
+                    }
+                    else
+                    {
+                        turn = "";
+                        gameOver = true;
+                    }
+                    GameDBInterface.UpdateGame(game);
+                    await DrawStone(move);
+                    await RemoveStones(capturedPeices);
+                }
+                catch (IllegalMoveException e) { illegal = "Illegal move - try again."; }
+            }
+        }
+        isLoadingOnClick = false;
+    }
+
+    async Task DrawStone(int[] move)
+    {
+        if (game.state == status.WhitesTurn)
+        {
+            await currentCanvasContext.SetFillStyleAsync("Black");
+
+        }
+        else
+        {
+            await currentCanvasContext.SetFillStyleAsync("White");
+        }
+        await currentCanvasContext.BeginPathAsync();
+        await currentCanvasContext.ArcAsync(move[0] * 30 + 40, move[1] * 30 + 40, 10, 0, 2 * Math.PI);
+        await currentCanvasContext.ClosePathAsync();
+        await currentCanvasContext.FillAsync();
+
+    }
+
+    async Task RemoveStones(ArrayList capturedPeices)
+    {
+        if (capturedPeices != null || capturedPeices.Count != 0)
+        {
+            foreach (int[] coord in capturedPeices)
+            {
+                int x = (coord[0] * 30) + 30;
+                int y = (coord[1] * 30) + 30;
+                await currentCanvasContext.ClearRectAsync(x, y, 20, 20);
+            }
+        }
+    }
 
     private async Task Forward()
     {
