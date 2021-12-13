@@ -35,27 +35,13 @@
                 </NavLink>
             </li>
         }
-        @if (curr_user is Player or Admin)
-        {
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" style="color: black" href="onlinegameoptions" Match="NavLinkMatch.All">
-                    <span class="oi oi-wifi" style="color: black" aria-hidden="true"></span> Play Online
-                </NavLink>
-            </li>
-        }
+
         <li class="nav-item px-3">
             <NavLink class="nav-link" style="color: black" href="lessonmenu" Match="NavLinkMatch.All">
                 <span class="oi oi-book" style="color: black" aria-hidden="true"></span> Lessons
             </NavLink>
         </li>
-        @if (curr_user is Player or Admin)
-        {
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" style="color: black" href="account" Match="NavLinkMatch.All">
-                    <span class="oi oi-person" style="color: black" aria-hidden="true"></span> My Account
-                </NavLink>
-            </li>
-        }
+
     </ul>
 </div>
 
