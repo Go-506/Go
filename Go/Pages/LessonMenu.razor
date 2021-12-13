@@ -38,15 +38,18 @@
 
         if (firstRender)
         {
+            
+            
             Globals.LESSONS.Database.DropCollection("lessons");
-            /*IMPORTANT: probably won't work on mac due to pathing differences. fix later*/
             foreach (string file in Directory.GetFiles("wwwroot\\lessons")) 
             {
                 string jsonstr = File.ReadAllText(file);
-                Console.WriteLine(jsonstr);
                 Shared.Models.Lesson parsedlesson = JsonSerializer.Deserialize<Shared.Models.Lesson>(jsonstr);
                 Globals.LESSONS.InsertOne(parsedlesson);
+                
             }
+            
+            
         }
     }
 
