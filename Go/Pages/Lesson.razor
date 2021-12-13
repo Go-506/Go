@@ -43,7 +43,8 @@
     private Shared.Models.Puzzle puzzle;
     private Shared.Models.Game game;
     private int currIndex;
-
+    Task refr;
+    Queue<int[]> slncopy;
 
     ElementReference divCanvas;
     Blazor.Extensions.BECanvasComponent stones;
@@ -53,23 +54,40 @@
     {
         lesson = LessonDBInterface.GetLesson(lesson_name);
         currPage = lesson.lessonPages.ElementAt<LessonPage>(0);
+        currIndex = 0;
         puzzle = currPage.puzzle;
         if (puzzle != null)
         {
             game = puzzle.game;
+            game.ResetToStart();
+            game.SetMove(game.totalMoves - 2);
         }
-        currIndex = 0;
+        else
+        {
+            if (refr != null && !refr.IsCompleted)
+            {
+                refr.Wait();
+            }
+            game = null;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && stones != null)
+        if (puzzle != null && puzzle.game != null)
         {
             currentCanvasContext = await stones.CreateCanvas2DAsync();
-            game.ResetToStart();
-            game.SetMove(game.totalMoves-2);
-            await Refresh();
-            Console.WriteLine(game.thisMove);
+            slncopy = new Queue<int[]>(puzzle.solution);
+            if (refr != null && !refr.IsCompleted)
+            {
+                refr.Wait();
+            }
+            refr = Task.Factory.StartNew(() => Refresh());
+
+        }
+        else
+        {
+            currentCanvasContext = null;
         }
     }
 
@@ -105,6 +123,7 @@
                 }
             }
         }
+
     }
 
     int[] GetMove(double mouseX, double mouseY)
@@ -136,6 +155,7 @@
     int whiteCapt = 0;
     int blackCapt = 0;
 
+
     async Task OnClick(MouseEventArgs eventArgs)
     {
 
@@ -166,21 +186,21 @@
                 return;
             }
 
-            if (puzzle.solution.Count() == 0)
+            if (slncopy.Count() == 0)
             {
                 isLoadingOnClick = false;
                 return;
             }
-            Console.WriteLine(move[0] + " " + move[1]);
-            int[] sln = puzzle.solution.Peek();
 
-            Console.WriteLine(sln[0] + " " + sln[1]);
+            int[] sln = slncopy.Peek();
+
             if (move[0] != sln[0] || move[1] != sln[1])
             {
                 isLoadingOnClick = false;
                 return;
             }
-            puzzle.solution.Dequeue();
+
+            slncopy.Dequeue();
 
             if (stones != null && currentCanvasContext != null && move != null)
             {
@@ -254,6 +274,21 @@
         {
             currIndex++;
             currPage = lesson.lessonPages.ElementAt(currIndex);
+            puzzle = currPage.puzzle;
+            if (puzzle != null)
+            {
+                game = puzzle.game;
+                game.ResetToStart();
+                game.SetMove(game.totalMoves - 2);
+            }
+            else
+            {
+                if (refr != null && !refr.IsCompleted)
+                {
+                    refr.Wait();
+                }
+                game = null;
+            }
         }
     }
 
@@ -263,6 +298,21 @@
         {
             currIndex--;
             currPage = lesson.lessonPages.ElementAt(currIndex);
+            puzzle = currPage.puzzle;
+            if (puzzle != null)
+            {
+                game = puzzle.game;
+                game.ResetToStart();
+                game.SetMove(game.totalMoves - 2);
+            }
+            else
+            {
+                if (refr != null && !refr.IsCompleted)
+                {
+                    refr.Wait();
+                }
+                game = null;
+            }
         }
     }
 }
