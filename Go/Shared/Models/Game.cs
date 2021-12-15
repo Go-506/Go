@@ -8,6 +8,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System.Collections;
 
 using Go.Shared.Models.MongoDB;
+using System.Text.Json.Serialization;
 
 namespace Go.Shared.Models
 {
@@ -28,17 +29,35 @@ namespace Go.Shared.Models
     {
         [BsonId]
         public ObjectId Id { get; set; }
-        public List<int[]> moveList { get; protected set; }
-        public List<Delta> deltas { get; protected set; }
-        public Board board { get; protected set; }
-        public int size { get; protected set; }
-        public int thisMove { get; protected set; }
-        public int totalMoves { get; protected set; }
-        public string player1 { get; protected set; }
-        public string player2 { get; protected set; }
-        public status state { get; protected set; }
-        public int passesInARow { get; protected set; }
-        public string date { get; protected set; }
+        public List<int[]> moveList { get; set; }
+        public List<Delta> deltas { get; set; }
+        public Board board { get; set; }
+        public int size { get; set; }
+        public int thisMove { get; set; }
+        public int totalMoves { get; set; }
+        public string player1 { get; set; }
+        public string player2 { get; set; }
+        public status state { get; set; }
+        public int passesInARow { get; set; }
+        public string date { get; set; }
+
+        [JsonConstructorAttribute]
+        public Game()
+        {
+            int size = 9;
+            moveList = new List<int[]>();
+            deltas = new List<Delta>();
+            this.player1 = player1;
+            this.player2 = player2;
+            this.state = status.BlacksTurn;
+            this.passesInARow = 0;
+            this.size = size;
+            this.thisMove = 0;
+            this.totalMoves = 0;
+            board = new Board(size);
+            this.date = DateTime.Now.Date.ToString("d");
+
+        }
 
         public Game(int size, string player1, string player2)
         {
@@ -158,7 +177,7 @@ namespace Go.Shared.Models
         // Tracks changes to the board
         public class Delta
         {
-            public List<int[]> deltas { get; private set; }
+            public List<int[]> deltas { get; set; }
             public Delta(Board state1, Board state2)
             {
                 int[,] b1 = state1.getBoard();
@@ -185,6 +204,7 @@ namespace Go.Shared.Models
                 }
             }
 
+            [JsonConstructorAttribute]
             public Delta()
             {
                 deltas = new List<int[]>();
