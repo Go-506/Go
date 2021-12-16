@@ -67,6 +67,7 @@
             if (refr != null && !refr.IsCompleted)
             {
                 refr.Wait();
+                refr = null;
             }
             game = null;
         }
@@ -81,6 +82,7 @@
             if (refr != null && !refr.IsCompleted)
             {
                 refr.Wait();
+                refr = null;
             }
             refr = Task.Factory.StartNew(() => Refresh());
 
@@ -150,8 +152,6 @@
     string turn = "Black's Turn";
     string illegal = "";
     string lastText = "";
-    int whiteScore = 0;
-    int blackScore = 0;
     int whiteCapt = 0;
     int blackCapt = 0;
 
@@ -208,8 +208,6 @@
                 try
                 {
                     capturedPeices = game.playMove(move[0], move[1]); illegal = "";
-                    blackScore = game.getScore()[0];
-                    whiteScore = game.getScore()[1];
                     blackCapt = game.board.captured[0];
                     whiteCapt = game.board.captured[1];
                     if (game.state == status.WhitesTurn)
@@ -227,7 +225,7 @@
                         turn = "";
                         gameOver = true;
                     }
-                    GameDBInterface.UpdateGame(game);
+                    game.totalMoves--;
                     await DrawStone(move);
                     await RemoveStones(capturedPeices);
                 }
@@ -286,8 +284,8 @@
                 if (refr != null && !refr.IsCompleted)
                 {
                     refr.Wait();
+                    refr = null;
                 }
-                game = null;
             }
         }
     }
@@ -310,8 +308,8 @@
                 if (refr != null && !refr.IsCompleted)
                 {
                     refr.Wait();
+                    refr = null;
                 }
-                game = null;
             }
         }
     }
