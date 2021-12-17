@@ -9,19 +9,13 @@
 
 <h2>Lessons:</h2>
 <br />
-<table>
-    @if (GetLessons() != null)
-    {
+@if (GetLessons() != null)
+{
         @foreach (Shared.Models.Lesson lesson in GetLessons())
         {
-            <tr>
-                <td>
-                    <a href="/lesson/@(lesson.name)">@(lesson.name)</a>
-                </td>
-            </tr>
+            <a href="/lesson/@(lesson.name)">@(lesson.name)</a>
         }
-    }
-</table>
+}
 @code {
         [Parameter]
         public string user { get; set; }

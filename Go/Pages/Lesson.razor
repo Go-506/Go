@@ -11,7 +11,7 @@
 @inject IJSRuntime jsRuntime
 
 
-<h3>Lesson: @lesson_name</h3>
+<h2>@lesson_name</h2>
 <img hidden=@(currPage.img==null) src=@("images/"+currPage.img)/>
 
 
@@ -28,7 +28,7 @@
 }
 
 <div>@(currPage.text)</div>
-
+<br />
 
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     <button type="button" @onclick="async () => await Back()" disabled=@(currIndex==0)>&lt;</button>&nbsp;

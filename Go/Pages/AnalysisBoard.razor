@@ -13,14 +13,7 @@
 
 
 
-@if (game.player2 is null)
-{
-    <h3>Analysis for local game:</h3>
-}
-else
-{
-    <h3>Analysis for @(game.player1) vs @game.player2):</h3>
-}
+<h3>Local Game on @(game.date) (@(game.Result()))</h3>
 <br />
 <div class="turn-options inline">
     <div>
@@ -34,24 +27,31 @@ else
 </div>
 <div style="display: flex; justify-content: center; align-items: center; height: auto;">
     <div>
-        @if (dimensions == 19)
-        {
-            <div @ref="divCanvas" class="board-canvas-19">
-                <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
-            </div>
-        }
-        @if (dimensions == 13)
-        {
-            <div @ref="divCanvas" class="board-canvas-13">
-                <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
-            </div>
-        }
-        @if (dimensions == 9)
-        {
-            <div @ref="divCanvas" class="board-canvas-9">
-                <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
-            </div>
-        }
+        <div>
+            @if (dimensions == 19)
+            {
+                <div @ref="divCanvas" class="board-canvas-19">
+                    <BECanvas @ref="stones" Height="620" Width="620"></BECanvas>
+                </div>
+            }
+            @if (dimensions == 13)
+            {
+                <div @ref="divCanvas" class="board-canvas-13">
+                    <BECanvas @ref="stones" Height="440" Width="440"></BECanvas>
+                </div>
+            }
+            @if (dimensions == 9)
+            {
+                <div @ref="divCanvas" class="board-canvas-9">
+                    <BECanvas @ref="stones" Height="320" Width="320"></BECanvas>
+                </div>
+            }
+        </div>
+        <br />
+        <div style="display: flex; justify-content: center; align-items: center; height: auto;">
+            <button type="button" @onclick="async () => await Back()">&lt;</button>&nbsp;
+            <button type="button" @onclick="async () => await Forward()">&gt;</button>
+        </div>
     </div>
     <div style="width: 20px" />
     <div>
@@ -72,12 +72,10 @@ else
                 </tr>
             }
         </table>
+
     </div>
 </div>
-<div style="display: flex; justify-content: center; align-items: center; height: auto;">
-    <button type="button" @onclick="async () => await Back()">&lt;</button>&nbsp;
-    <button type="button" @onclick="async () => await Forward()">&gt;</button>
-</div>
+
 <br />
 
 
