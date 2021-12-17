@@ -23,10 +23,22 @@
     }
 </table>
 @code {
-        [Parameter]
-        public string user { get; set; }
+    [Parameter]
+    public string user { get; set; }
     private List<Shared.Models.Lesson> lessons;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Globals.LESSONS.Database.DropCollection("lessons");
+        foreach (string file in Directory.GetFiles("wwwroot/lessons"))
+        {
+            string jsonstr = File.ReadAllText(file);
+            Shared.Models.Lesson parsedlesson = JsonSerializer.Deserialize<Shared.Models.Lesson>(jsonstr);
+            Globals.LESSONS.InsertOne(parsedlesson);
+
+        }
+
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -38,18 +50,11 @@
 
         if (firstRender)
         {
-            
-            
-            Globals.LESSONS.Database.DropCollection("lessons");
-            foreach (string file in Directory.GetFiles("wwwroot/lessons")) 
-            {
-                string jsonstr = File.ReadAllText(file);
-                Shared.Models.Lesson parsedlesson = JsonSerializer.Deserialize<Shared.Models.Lesson>(jsonstr);
-                Globals.LESSONS.InsertOne(parsedlesson);
-                
-            }
-            
-            
+
+
+
+
+
         }
     }
 
