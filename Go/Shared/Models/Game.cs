@@ -78,7 +78,6 @@ namespace Go.Shared.Models
         {
             Board oldBoard = new Board(board.getBoard());
             int[] move = new int[2] { row, col };
-            //moveList.Append(move);
             int color = 0;
             if (state == status.BlacksTurn)
                 color = 1;
