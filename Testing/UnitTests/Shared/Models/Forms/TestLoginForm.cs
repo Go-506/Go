@@ -10,24 +10,31 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Bunit;
 using Go.Shared.Forms;
+using Go.Shared.Models.MongoDB;
+using Go.Shared.Models;
 using Moq;
 using Xunit;
 
 namespace Testing.UnitTests.Shared.Models.Forms
-{ 
-    public class TestLogoutButton
+{
+    public class TestLoginForm: IDisposable
     {
-
         private Mock<ILocalStorageService> localStorageMock;
         private TestContext context;
-        public TestLogoutButton()
+        private IRenderedComponent<LoginForm> form;
+        public TestLoginForm()
         {
             localStorageMock = new Mock<ILocalStorageService>();
             localStorageMock.Setup(s => s.RemoveItemAsync(It.IsAny<String>(), It.IsAny<CancellationToken?>()));
+            localStorageMock.Setup(s => s.SetItemAsync<string>(It.IsAny<String>(), It.IsAny<string>(), It.IsAny<CancellationToken?>()));
 
 
             context = new TestContext();
             context.Services.AddSingleton<ILocalStorageService>(localStorageMock.Object);
+
+            LoginForm.Show();
+
+            form = context.RenderComponent<LoginForm>();
         }
 
         public void Dispose()
@@ -36,13 +43,10 @@ namespace Testing.UnitTests.Shared.Models.Forms
         }
 
         [Fact]
-        public void TestClick()
+        public void TestClose()
         {
-            var component = context.RenderComponent<LogoutButton>();
-
-            component.Find(".headtext").Click();
-
-            localStorageMock.Verify((s => s.RemoveItemAsync(It.IsAny<String>(), It.IsAny<CancellationToken?>())), Times.Once());
+            form.Find(".close").Click();
+            Assert.Throws<ElementNotFoundException>(() => form.Find(".close"));
         }
     }
 }
