@@ -41,7 +41,7 @@
             
             
             Globals.LESSONS.Database.DropCollection("lessons");
-            foreach (string file in Directory.GetFiles("wwwroot\\lessons")) 
+            foreach (string file in Directory.GetFiles("wwwroot/lessons")) 
             {
                 string jsonstr = File.ReadAllText(file);
                 Shared.Models.Lesson parsedlesson = JsonSerializer.Deserialize<Shared.Models.Lesson>(jsonstr);

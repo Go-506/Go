@@ -27,6 +27,8 @@
 </div>
 }
 
+<div style="color: green;">@(correct)</div>
+<div style="color: red;">@(hint)</div>
 <div>@(currPage.text)</div>
 
 
@@ -45,6 +47,10 @@
     private int currIndex;
     Task refr;
     Queue<int[]> slncopy;
+    Queue<string> hintcopy;
+    Queue<string> correctcopy;
+    private String hint = "";
+    private String correct = "";
 
     ElementReference divCanvas;
     Blazor.Extensions.BECanvasComponent stones;
@@ -78,6 +84,8 @@
         {
             currentCanvasContext = await stones.CreateCanvas2DAsync();
             slncopy = new Queue<int[]>(puzzle.solution);
+            hintcopy = new Queue<string>(puzzle.hints);
+            correctcopy = new Queue<string>(puzzle.correct);
             if (refr != null && !refr.IsCompleted)
             {
                 refr.Wait();
@@ -162,6 +170,7 @@
         {
             return;
         }
+        hint = ""; correct = "";
         if (game.state != status.BlacksTurn && game.state != status.WhitesTurn)
         {
             return;
@@ -196,10 +205,13 @@
             if (move[0] != sln[0] || move[1] != sln[1])
             {
                 isLoadingOnClick = false;
+                hint = "Incorrect. " + hintcopy.Peek();
                 return;
             }
 
+            correct = "Correct! " + correctcopy.Dequeue(); ;
             slncopy.Dequeue();
+            hintcopy.Dequeue();
 
             if (stones != null && currentCanvasContext != null && move != null)
             {
@@ -269,6 +281,8 @@
     {
         if (currIndex < lesson.lessonPages.Count-1)
         {
+            hint = "";
+            correct = "";
             currIndex++;
             currPage = lesson.lessonPages.ElementAt(currIndex);
             puzzle = currPage.puzzle;
@@ -293,6 +307,8 @@
     {
         if (currIndex > 0)
         {
+            hint = "";
+            correct = "";
             currIndex--;
             currPage = lesson.lessonPages.ElementAt(currIndex);
             puzzle = currPage.puzzle;

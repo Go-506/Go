@@ -23,7 +23,7 @@
               [ 4, 3, -1 ],
               [ 4, 2, 1 ],
               [ 5, 3, 1 ],
-              [ 5, 4, 1 ],
+              [ 5, 4, 1  ],
               [ 5, 5, 1 ]
             ],
             "deltas": [
@@ -61,6 +61,12 @@
           },
           "solution": [
             [ 4, 6 ]
+          ],
+          "hints": [
+            "Look at white's pieces - where is there a 'liberty,' or free space, around it's cluster?"
+          ],
+          "correct": [
+            ""
           ]
         }
       },
