@@ -6,13 +6,11 @@
 
 <h2>Match History:</h2>
     <br />
-    <table>
-        @if (GetGames() != null)
+            @if (GetGames() != null)
         {
             @foreach (Game game in GetGames())
             {
-                <tr>
-                    <td>
+
                         @if (game != null)
                         {
                             @if (game.player2 == null)
@@ -24,11 +22,10 @@
                                 <a href="/analysisboard/@(game.Id)">Online vs @(game.player2) on @(game.date) (@(game.Result()))</a>
                             }
                         }
-                    </td>
-                </tr>
+                        <br />
+
             }
         }
-    </table>
     @code {
         [Parameter]
         public string user { get; set; }
