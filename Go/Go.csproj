@@ -5,12 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\joe\.nuget\packages\stgtour.gtour\1.0.7\contentFiles\any\net50\tsconfig.json" />
+    <Content Remove="C:\Users\schue\.nuget\packages\stgtour.gtour\1.0.7\contentFiles\any\net50\tsconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
     <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="STGTour.GTour" Version="1.0.7" />
     <PackageReference Include="Node.js" Version="5.3.0" />
   </ItemGroup>
 

@@ -1,0 +1,125 @@
+﻿{
+  "name": "Puzzles 1: Captures",
+  "lessonPages": [
+    { "text": "In this lesson, we will go through some examples of captures." },
+    {
+      "text": "Try placing a black stone to capture the white stones.",
+      "puzzle": {
+        "game": {
+          "_id": { "$oid": "61b67ea4eb072de5cccd0834" },
+          "moveList": [
+            [ 6, 0, 1 ],
+            [ 7, 0, -1 ],
+            [ 6, 1, 1 ],
+            [ 7, 1, -1 ],
+            [ 1, 0, 1 ],
+            [ 0, 0, -1 ],
+            [ 7, 2, 1 ],
+            [ 0, 1, -1 ],
+            [ 8, 2, 1 ],
+            [ 8, 1, -1 ]
+          ],
+          "deltas": [
+            { "deltas": [ [ 6, 0, 1 ] ] },
+            { "deltas": [ [ 7, 0, -1 ] ] },
+            { "deltas": [ [ 6, 1, 1 ] ] },
+            { "deltas": [ [ 7, 1, -1 ] ] },
+            { "deltas": [ [ 1, 0, 1 ] ] },
+            { "deltas": [ [ 0, 0, -1 ] ] },
+            { "deltas": [ [ 7, 2, 1 ] ] },
+            { "deltas": [ [ 0, 1, -1 ] ] },
+            { "deltas": [ [ 8, 2, 1 ] ] },
+            { "deltas": [ [ 8, 1, -1 ] ] },
+            { "deltas": [] },
+            { "deltas": [] }
+          ],
+          "board": {
+            "score": [ 5, 5 ],
+            "captured": [ 0, 0 ],
+            "lastCapt": [ -1, -1 ]
+          },
+          "size": 9,
+          "thisMove": 12,
+          "totalMoves": 12,
+          "player1": "a",
+          "player2": null,
+          "state": 2,
+          "passesInARow": 2,
+          "date": "12/17/2021"
+        },
+        "solution": [
+          [ 8, 0 ]
+        ],
+        "hints": [
+          "Look at white's cluster on the top right of the board."
+        ],
+        "correct": [
+          "Sometimes, liberties will be located inside of a cluster. This is called an 'eye.'"
+        ]
+      }
+    },
+    {
+      "text": "If filling an eye will capture a cluster, then it is legal. However, if you try to fill an eye without capturing anything, the move is suicide and therefore illegal. Now, let's try another puzzle."
+    },
+    {
+      "text": "Try placing a black stone to capture the white stones.",
+      "puzzle": {
+        "game": {
+          "_id": { "$oid": "61b67ea4eb072de5cccd0835" },
+          "moveList": [
+            [ 0, 0, 1 ],
+            [ 8, 1, -1 ],
+            [ 5, 0, 1 ],
+            [ 6, 0, -1 ],
+            [ 6, 1, 1 ],
+            [ 7, 1, -1 ],
+            [ 6, 2, 1 ],
+            [ 7, 2, -1 ],
+            [ 7, 3, 1 ],
+            [ 8, 3, -1 ],
+            [ 8, 4, 1 ],
+            [ 8, 0, -1 ]
+          ],
+          "deltas": [
+            { "deltas": [ [ 0, 0, 1 ] ] },
+            { "deltas": [ [ 8, 1, -1 ] ] },
+            { "deltas": [ [ 5, 0, 1 ] ] },
+            { "deltas": [ [ 6, 0, -1 ] ] },
+            { "deltas": [ [ 6, 1, 1 ] ] },
+            { "deltas": [ [ 7, 1, -1 ] ] },
+            { "deltas": [ [ 6, 2, 1 ] ] },
+            { "deltas": [ [ 7, 2, -1 ] ] },
+            { "deltas": [ [ 7, 3, 1 ] ] },
+            { "deltas": [ [ 8, 3, -1 ] ] },
+            { "deltas": [ [ 8, 4, 1 ] ] },
+            { "deltas": [ [ 8, 0, -1 ] ] },
+            { "deltas": [] },
+            { "deltas": [] }
+          ],
+          "board": {
+            "score": [ 5, 5 ],
+            "captured": [ 0, 0 ],
+            "lastCapt": [ -1, -1 ]
+          },
+          "size": 9,
+          "thisMove": 14,
+          "totalMoves": 14,
+          "player1": "a",
+          "player2": null,
+          "state": 2,
+          "passesInARow": 2,
+          "date": "12/17/2021"
+        },
+        "solution": [
+          [ 8, 2 ]
+        ],
+        "hints": [
+          "You cannot capture the entire cluster on this turn. Think of a move that positions you do as such on your next turn."
+        ],
+        "correct": [
+          "Notice how the white cluster would now be exposed to capture on the next turn by playing to H9."
+        ]
+      }
+    }
+  ]
+}
