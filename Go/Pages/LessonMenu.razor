@@ -40,24 +40,6 @@
 
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (user != null)
-        {
-            user = (await Globals.GetUser(localStorage)).name;
-        }
-        IUser userInstance = UserDBInterface.GetUser(user);
-
-        if (firstRender)
-        {
-
-
-
-
-
-        }
-    }
-
     private List<Shared.Models.Lesson> GetLessons()
     {
         IUser userInstance = UserDBInterface.GetUser(user);
