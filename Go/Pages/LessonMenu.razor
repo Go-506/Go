@@ -14,6 +14,7 @@
         @foreach (Shared.Models.Lesson lesson in GetLessons())
         {
             <a href="/lesson/@(lesson.name)">@(lesson.name)</a>
+            <br />
         }
 }
 @code {
