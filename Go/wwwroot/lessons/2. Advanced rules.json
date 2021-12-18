@@ -1,5 +1,5 @@
 {
-  "name": "Advanced Rules",
+  "name": "2. Advanced Rules",
   "lessonPages": [
     { "text": "In Go there is a rule called ko, which stipulates that moves can't recreate immediately previous board states. This rule prevents games from going on forever and prevents scoring issues, since the number of enemy pieces captured factors into many scoring systems." },
     {
